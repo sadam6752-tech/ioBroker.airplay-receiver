@@ -54,9 +54,9 @@ class AirplayReceiver extends utils.Adapter {
     get timers() {
         return {
             setTimeout: (cb, ms) => this.setTimeout(cb, ms),
-            clearTimeout: h => h && this.clearTimeout(h),
+            clearTimeout: h => h && this.clearTimeout(/** @type {ioBroker.Timeout} */ (h)),
             setInterval: (cb, ms) => this.setInterval(cb, ms),
-            clearInterval: h => h && this.clearInterval(h),
+            clearInterval: h => h && this.clearInterval(/** @type {ioBroker.Interval} */ (h)),
         };
     }
 
@@ -167,7 +167,7 @@ class AirplayReceiver extends utils.Adapter {
                     type: 'state',
                     common: {
                         name: NAMES[/** @type {string} */ (key)],
-                        type: /** @type {any} */ (type),
+                        type: /** @type {ioBroker.CommonType} */ (type),
                         role: /** @type {string} */ (role),
                         read: true,
                         write: false,

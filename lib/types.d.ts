@@ -3,13 +3,13 @@
 /** Timer functions of the adapter (they end with the adapter) */
 export interface Timers {
     /** Starts a timeout */
-    setTimeout: (cb: () => void, ms: number) => any;
+    setTimeout: (cb: () => void, ms: number) => unknown;
     /** Clears a timeout */
-    clearTimeout: (handle: any) => void;
+    clearTimeout: (handle: unknown) => void;
     /** Starts an interval */
-    setInterval: (cb: () => void, ms: number) => any;
+    setInterval: (cb: () => void, ms: number) => unknown;
     /** Clears an interval */
-    clearInterval: (handle: any) => void;
+    clearInterval: (handle: unknown) => void;
 }
 
 /** Logger of the adapter */

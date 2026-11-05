@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
+            "0.0.2": {
+                "en": "Release through the GitHub workflow with npm provenance; stricter types in the code",
+                "de": "Veröffentlichung über den GitHub-Workflow mit npm-Provenance; strengere Typen im Code",
+                "ru": "Публикация через GitHub-workflow с npm provenance; более строгие типы в коде",
+                "pt": "Publicação pelo workflow do GitHub com proveniência npm; tipos mais rigorosos no código",
+                "nl": "Publicatie via de GitHub-workflow met npm-provenance; strengere typen in de code",
+                "fr": "Publication par le workflow GitHub avec provenance npm ; types plus stricts dans le code",
+                "it": "Pubblicazione tramite il workflow GitHub con provenienza npm; tipi più rigorosi nel codice",
+                "es": "Publicación mediante el workflow de GitHub con procedencia npm; tipos más estrictos en el código",
+                "pl": "Publikacja przez workflow GitHub z pochodzeniem npm; ściślejsze typy w kodzie",
+                "uk": "Публікація через GitHub-workflow з npm provenance; суворіші типи в коді",
+                "zh-cn": "通过 GitHub 工作流发布并附带 npm 来源证明；代码中使用更严格的类型"
+            },
             "0.0.1": {
                 "en": "First version: every voice satellite of ioBroker.assistant becomes an AirPlay speaker for iPhone, iPad and Mac",
                 "de": "Erste Version: jeder Sprachsatellit von ioBroker.assistant wird ein AirPlay-Lautsprecher für iPhone, iPad und Mac",
