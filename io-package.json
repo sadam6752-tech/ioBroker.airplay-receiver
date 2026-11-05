@@ -1,0 +1,153 @@
+{
+    "common": {
+        "name": "airplay-receiver",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "First version: every voice satellite of ioBroker.assistant becomes an AirPlay speaker for iPhone, iPad and Mac",
+                "de": "Erste Version: jeder Sprachsatellit von ioBroker.assistant wird ein AirPlay-Lautsprecher für iPhone, iPad und Mac",
+                "ru": "Первая версия: каждый голосовой сателлит ioBroker.assistant становится колонкой AirPlay для iPhone, iPad и Mac",
+                "pt": "Primeira versão: cada satélite de voz do ioBroker.assistant torna-se um altifalante AirPlay para iPhone, iPad e Mac",
+                "nl": "Eerste versie: elke spraaksatelliet van ioBroker.assistant wordt een AirPlay-luidspreker voor iPhone, iPad en Mac",
+                "fr": "Première version : chaque satellite vocal d'ioBroker.assistant devient une enceinte AirPlay pour iPhone, iPad et Mac",
+                "it": "Prima versione: ogni satellite vocale di ioBroker.assistant diventa un altoparlante AirPlay per iPhone, iPad e Mac",
+                "es": "Primera versión: cada satélite de voz de ioBroker.assistant se convierte en un altavoz AirPlay para iPhone, iPad y Mac",
+                "pl": "Pierwsza wersja: każdy satelita głosowy ioBroker.assistant staje się głośnikiem AirPlay dla iPhone'a, iPada i Maca",
+                "uk": "Перша версія: кожен голосовий сателіт ioBroker.assistant стає колонкою AirPlay для iPhone, iPad і Mac",
+                "zh-cn": "首个版本：ioBroker.assistant 的每个语音卫星都成为 iPhone、iPad 和 Mac 的 AirPlay 扬声器"
+            }
+        },
+        "titleLang": {
+            "en": "AirPlay receiver",
+            "de": "AirPlay-Empfänger",
+            "ru": "Приёмник AirPlay",
+            "pt": "Recetor AirPlay",
+            "nl": "AirPlay-ontvanger",
+            "fr": "Récepteur AirPlay",
+            "it": "Ricevitore AirPlay",
+            "es": "Receptor AirPlay",
+            "pl": "Odbiornik AirPlay",
+            "uk": "Приймач AirPlay",
+            "zh-cn": "AirPlay 接收器"
+        },
+        "desc": {
+            "en": "Makes the voice satellites of ioBroker.assistant AirPlay speakers: an iPhone or Mac streams music, the satellite plays it",
+            "de": "Macht die Sprachsatelliten von ioBroker.assistant zu AirPlay-Lautsprechern: ein iPhone oder Mac streamt Musik, der Satellit spielt sie ab",
+            "ru": "Превращает голосовые сателлиты ioBroker.assistant в колонки AirPlay: iPhone или Mac передаёт музыку, сателлит её играет",
+            "pt": "Transforma os satélites de voz do ioBroker.assistant em altifalantes AirPlay: um iPhone ou Mac transmite música, o satélite reproduz",
+            "nl": "Maakt van de spraaksatellieten van ioBroker.assistant AirPlay-luidsprekers: een iPhone of Mac streamt muziek, de satelliet speelt die af",
+            "fr": "Transforme les satellites vocaux d'ioBroker.assistant en enceintes AirPlay : un iPhone ou un Mac diffuse la musique, le satellite la joue",
+            "it": "Trasforma i satelliti vocali di ioBroker.assistant in altoparlanti AirPlay: un iPhone o un Mac trasmette la musica, il satellite la riproduce",
+            "es": "Convierte los satélites de voz de ioBroker.assistant en altavoces AirPlay: un iPhone o Mac transmite música y el satélite la reproduce",
+            "pl": "Zamienia satelity głosowe ioBroker.assistant w głośniki AirPlay: iPhone lub Mac przesyła muzykę, a satelita ją odtwarza",
+            "uk": "Перетворює голосові сателіти ioBroker.assistant на колонки AirPlay: iPhone або Mac передає музику, сателіт її відтворює",
+            "zh-cn": "让 ioBroker.assistant 的语音卫星成为 AirPlay 扬声器：iPhone 或 Mac 推送音乐，卫星播放"
+        },
+        "authors": [
+            "sadam6752-tech <sadam6752@gmail.com>"
+        ],
+        "keywords": [
+            "airplay",
+            "raop",
+            "airtunes",
+            "speaker",
+            "esphome",
+            "satellite",
+            "ffmpeg",
+            "music"
+        ],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "airplay-receiver.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/sadam6752-tech/ioBroker.airplay-receiver/main/admin/airplay-receiver.png",
+        "readme": "https://github.com/sadam6752-tech/ioBroker.airplay-receiver/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=7.0.7"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.6.20"
+            }
+        ],
+        "messagebox": true
+    },
+    "native": {
+        "receivers": [],
+        "autoDiscover": true,
+        "assistantInstance": "assistant.0",
+        "port": 8095,
+        "bind": "0.0.0.0",
+        "urlHost": "",
+        "sampleRate": 48000,
+        "channels": 1,
+        "syncVolume": true,
+        "holdMs": 350,
+        "prerollMs": 1500,
+        "idleStop": 15,
+        "ffmpegPath": ""
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Information",
+                    "de": "Informationen",
+                    "ru": "Информация",
+                    "pt": "Informação",
+                    "nl": "Informatie",
+                    "fr": "Informations",
+                    "it": "Informazioni",
+                    "es": "Información",
+                    "pl": "Informacje",
+                    "uk": "Інформація",
+                    "zh-cn": "信息"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": {
+                    "en": "Speakers announced",
+                    "de": "Lautsprecher angekündigt",
+                    "ru": "Колонки объявлены",
+                    "pt": "Altifalantes anunciados",
+                    "nl": "Luidsprekers aangekondigd",
+                    "fr": "Enceintes annoncées",
+                    "it": "Altoparlanti annunciati",
+                    "es": "Altavoces anunciados",
+                    "pl": "Głośniki ogłoszone",
+                    "uk": "Колонки оголошено",
+                    "zh-cn": "扬声器已发布"
+                },
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

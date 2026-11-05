@@ -1,0 +1,14 @@
+# Which Dependabot updates are merged automatically (after the tests passed),
+# read by iobroker-bot-orga/action-automerge-dependabot
+- match:
+    # production dependencies: patch updates only
+    dependency_type: production
+    update_type: 'semver:patch'
+- match:
+    # development dependencies: patch and minor updates
+    dependency_type: development
+    update_type: 'semver:minor'
+- match:
+    # changes of package-lock.json only: patch and minor updates
+    dependency_type: package-lock
+    update_type: 'semver:minor'
