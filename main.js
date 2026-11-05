@@ -11,7 +11,15 @@ const { Channel, StreamServer } = require('./lib/streamer');
 const { Announcer } = require('./lib/mdns');
 const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
-const { normalizeReceivers, playersFromIds, volumeLevel, displayTitle, streamHost, toId } = require('./lib/config');
+const {
+    normalizeReceivers,
+    playersFromIds,
+    volumeLevel,
+    displayTitle,
+    fitTitle,
+    streamHost,
+    toId,
+} = require('./lib/config');
 
 /**
  * @typedef {import('./lib/types').ReceiverConfig} ReceiverConfig
@@ -25,6 +33,8 @@ const { normalizeReceivers, playersFromIds, volumeLevel, displayTitle, streamHos
  * @property {string} local - Local address of the current sender connection
  * @property {boolean} started - The satellite was told to play
  * @property {string} shownTitle - Text on the display
+ * @property {boolean} hasMetadata - The sender named the track in this session
+ * @property {unknown} titleTimer - Second write of the title after the satellite connected
  */
 
 class AirplayReceiver extends utils.Adapter {
@@ -213,12 +223,23 @@ class AirplayReceiver extends utils.Adapter {
             sampleRate: Number(this.config.sampleRate) || 48000,
             channels: Number(this.config.channels) === 2 ? 2 : 1,
             prerollMs: Math.max(0, Number(this.config.prerollMs ?? 1500)),
+            // the satellite may replace the display text while it starts the new stream: write ours again
+            onListener: () => this.refreshTitle(r),
             ffmpegPath,
             log: this.log,
         });
         this.http?.add(channel);
         /** @type {Running} */
-        const r = { cfg, raop, channel, local: '', started: false, shownTitle: '' };
+        const r = {
+            cfg,
+            raop,
+            channel,
+            local: '',
+            started: false,
+            shownTitle: '',
+            hasMetadata: false,
+            titleTimer: null,
+        };
         this.running.push(r);
         const base = `receivers.${cfg.id}`;
         const set = (key, val) =>
@@ -229,6 +250,10 @@ class AirplayReceiver extends utils.Adapter {
             channel.setFormat(s.format);
             set('connected', true);
             set('client', s.client);
+            // the display still shows what played before (a radio station) until the sender names the track
+            if (!r.hasMetadata) {
+                void this.showTitle(r, fitTitle(`AirPlay – ${s.client}`));
+            }
         });
         raop.on('frame', frame => channel.push(frame));
         raop.on('active', active => {
@@ -251,9 +276,16 @@ class AirplayReceiver extends utils.Adapter {
             set('title', info.title || '');
             set('artist', info.artist || '');
             set('album', info.album || '');
-            void this.showTitle(r, displayTitle(info));
+            const text = displayTitle(info);
+            if (text) {
+                r.hasMetadata = true;
+                void this.showTitle(r, text);
+            }
         });
         raop.on('end', () => {
+            r.hasMetadata = false;
+            this.timers.clearTimeout(r.titleTimer);
+            r.titleTimer = null;
             void this.stopPlaying(r);
             channel.reset();
             for (const [key, val] of [
@@ -299,6 +331,26 @@ class AirplayReceiver extends utils.Adapter {
         if (r.shownTitle) {
             await this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
         }
+    }
+
+    /**
+     * The satellite opened the stream: while it starts playing it may still show (or set) the text of what played
+     * before, so the current title is written now and once more two seconds later.
+     *
+     * @param {Running} r - Receiver
+     */
+    refreshTitle(r) {
+        if (!r.shownTitle) {
+            return;
+        }
+        void this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
+        this.timers.clearTimeout(r.titleTimer);
+        r.titleTimer = this.timers.setTimeout(() => {
+            r.titleTimer = null;
+            if (r.shownTitle) {
+                void this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
+            }
+        }, 2000);
     }
 
     /**
@@ -373,6 +425,7 @@ class AirplayReceiver extends utils.Adapter {
     async onUnload(callback) {
         try {
             for (const r of this.running) {
+                this.timers.clearTimeout(r.titleTimer);
                 await this.stopPlaying(r);
                 await r.raop.stop();
             }

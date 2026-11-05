@@ -69,8 +69,12 @@ tests.integration(path.join(__dirname, '..'), {
                 this.timeout(60_000);
                 const sender = new RaopSender({ port: RTSP_PORT, drop: seq => seq % 50 === 7 });
                 try {
+                    // the display still shows the radio station that played before
+                    await harness.states.setStateAsync(`${SAT}.controls.media_title`, { val: 'SWR3', ack: true });
                     await sender.connect();
                     await sender.start();
+                    // before the sender names the track, the display shows where the music comes from
+                    await waitFor(`${SAT}.controls.media_title`, v => v === 'AirPlay – Test iPhone');
                     await sender.volume(-15);
                     await sender.metadata(buildDmap([['mlit', buildDmap([['minm', 'Song'], ['asar', 'Band']])]]));
                     for (let i = 0; i < 100; i += 5) {
@@ -92,6 +96,9 @@ tests.integration(path.join(__dirname, '..'), {
                     const reader = res.body?.getReader();
                     const first = await reader?.read();
                     assert.equal(Buffer.from(first?.value || []).subarray(0, 4).toString(), 'fLaC');
+                    // the firmware may have replaced the text while it opened the stream: it is written again
+                    await harness.states.setStateAsync(`${SAT}.controls.media_title`, { val: 'SWR3', ack: true });
+                    await waitFor(`${SAT}.controls.media_title`, v => v === 'Band – Song', 5000);
                     await reader?.cancel();
 
                     await sender.teardown();

@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "news": {
+            "0.0.3": {
+                "en": "The display shows \"AirPlay – <sender>\" right away instead of the radio station that played before, and the track title is written again once the satellite has opened the stream",
+                "de": "Das Display zeigt sofort \"AirPlay – <Sender>\" statt des zuvor gespielten Radiosenders, und der Titel wird erneut geschrieben, sobald der Satellit den Stream geöffnet hat",
+                "ru": "Дисплей сразу показывает «AirPlay – <отправитель>» вместо радиостанции, игравшей до этого, а название трека записывается повторно, когда сателлит открыл поток",
+                "pt": "O ecrã mostra logo \"AirPlay – <emissor>\" em vez da estação de rádio anterior, e o título da faixa é escrito de novo quando o satélite abre o fluxo",
+                "nl": "Het display toont meteen \"AirPlay – <zender>\" in plaats van de radiozender die eerder speelde, en de titel wordt opnieuw geschreven zodra de satelliet de stream heeft geopend",
+                "fr": "L'écran affiche aussitôt « AirPlay – <émetteur> » au lieu de la radio jouée avant, et le titre est réécrit dès que le satellite a ouvert le flux",
+                "it": "Il display mostra subito \"AirPlay – <mittente>\" invece della stazione radio riprodotta prima, e il titolo viene riscritto appena il satellite ha aperto il flusso",
+                "es": "La pantalla muestra enseguida \"AirPlay – <emisor>\" en lugar de la emisora que sonaba antes, y el título se escribe de nuevo cuando el satélite abre el flujo",
+                "pl": "Wyświetlacz od razu pokazuje „AirPlay – <nadawca>” zamiast wcześniej grającej stacji radiowej, a tytuł jest zapisywany ponownie, gdy satelita otworzy strumień",
+                "uk": "Дисплей одразу показує «AirPlay – <відправник>» замість радіостанції, що грала раніше, а назва треку записується повторно, коли сателіт відкрив потік",
+                "zh-cn": "显示屏立即显示“AirPlay – <发送端>”，不再停留在之前播放的电台，卫星打开流后会再次写入曲目标题"
+            },
             "0.0.2": {
                 "en": "Release through the GitHub workflow with npm provenance; stricter types in the code",
                 "de": "Veröffentlichung über den GitHub-Workflow mit npm-Provenance; strengere Typen im Code",

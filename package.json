@@ -1,6 +1,6 @@
 {
   "name": "iobroker.airplay-receiver",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Makes ioBroker.assistant voice satellites AirPlay speakers: an iPhone or Mac streams music, the satellite plays it",
   "author": {
     "name": "sadam6752-tech",

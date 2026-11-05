@@ -9,7 +9,7 @@ const { parseSdp } = require('../../lib/sdp');
 const { Playout, seqDiff } = require('../../lib/playout');
 const { escapeFrame, silenceFrame } = require('../../lib/alac');
 const { vint, header } = require('../../lib/mkv');
-const { normalizeReceivers, playersFromIds, volumeLevel, displayTitle, streamHost, toId } = require('../../lib/config');
+const { normalizeReceivers, playersFromIds, volumeLevel, displayTitle, fitTitle, streamHost, toId } = require('../../lib/config');
 const { raopTxt, serviceName, mdnsHost } = require('../../lib/mdns');
 
 describe('RAOP crypto', () => {
@@ -209,6 +209,7 @@ describe('Settings', () => {
         assert.ok(Buffer.byteLength(long) <= 48, long);
         assert.ok(long.endsWith('…') && long.startsWith('ANIVAR • Video verfügbar – Л'), long);
         assert.ok(!long.includes('�'));
+        assert.equal(fitTitle('AirPlay – iPhone'), 'AirPlay – iPhone');
         assert.equal(streamHost('nas.local', '10.0.0.2'), 'nas.local');
         assert.equal(streamHost('', '::ffff:10.0.0.15'), '10.0.0.15');
     });

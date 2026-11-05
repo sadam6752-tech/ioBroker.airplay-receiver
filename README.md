@@ -44,7 +44,7 @@ One row per AirPlay speaker:
 
 | Column           | Meaning                                                                                         |
 | ---------------- | ----------------------------------------------------------------------------------------------- |
-| AirPlay name     | Name in the AirPlay list of the iPhone, e.g. `Gast`                                              |
+| AirPlay name     | Name in the AirPlay list of the iPhone, e.g. `Gast`                                             |
 | Satellite player | `<satellite>.<player>`, e.g. `Gast.waveshare_voice_eb1614` — the list offers every player found |
 | Format           | FLAC (lossless, little CPU on the satellite) or MP3                                             |
 | RTSP port        | 0 = any free port (announced via mDNS); set a fixed port only for a firewall rule               |
@@ -54,17 +54,17 @@ the satellite.
 
 ### Settings
 
-| Setting                                 | Default       | Meaning                                                                                  |
-| --------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
-| Instance of ioBroker.assistant          | `assistant.0` |                                                                                          |
-| HTTP port of the stream / Listen on     | 8095, all     | The satellite fetches `http://<host>:8095/<name>.flac`                                   |
-| Address of this host for the satellite | empty         | Empty = the address the iPhone reached; set it if ioBroker has several networks          |
-| Sample rate, channels                   | 48 kHz, mono  | What the satellite plays; the Waveshare firmware declares 48 kHz mono                     |
-| Volume of the sender sets the satellite | on            | AirPlay -30…0 dB → `controls.<player>.volume` 0…1, mute → 0                              |
-| Wait for a lost packet                  | 350 ms        | How long a gap waits for its retransmission                                              |
-| Audio kept until the satellite connects | 1500 ms       | The beginning of a song is not lost while the satellite opens the stream                 |
-| Stop the satellite after a pause of     | 15 s          | Short pauses keep the stream open (silence); a longer pause stops the satellite          |
-| Path of ffmpeg                          | empty         | Empty = the bundled ffmpeg                                                               |
+| Setting                                 | Default       | Meaning                                                                         |
+| --------------------------------------- | ------------- | ------------------------------------------------------------------------------- |
+| Instance of ioBroker.assistant          | `assistant.0` |                                                                                 |
+| HTTP port of the stream / Listen on     | 8095, all     | The satellite fetches `http://<host>:8095/<name>.flac`                          |
+| Address of this host for the satellite  | empty         | Empty = the address the iPhone reached; set it if ioBroker has several networks |
+| Sample rate, channels                   | 48 kHz, mono  | What the satellite plays; the Waveshare firmware declares 48 kHz mono           |
+| Volume of the sender sets the satellite | on            | AirPlay -30…0 dB → `controls.<player>.volume` 0…1, mute → 0                     |
+| Wait for a lost packet                  | 350 ms        | How long a gap waits for its retransmission                                     |
+| Audio kept until the satellite connects | 1500 ms       | The beginning of a song is not lost while the satellite opens the stream        |
+| Stop the satellite after a pause of     | 15 s          | Short pauses keep the stream open (silence); a longer pause stops the satellite |
+| Path of ffmpeg                          | empty         | Empty = the bundled ffmpeg                                                      |
 
 ## What happens
 
@@ -82,28 +82,28 @@ The latency is about 2–3 seconds (the satellite buffers the HTTP stream). Vide
 
 For every speaker below `airplay-receiver.0.receivers.<name>`:
 
-| State       | Meaning                                       |
-| ----------- | --------------------------------------------- |
-| `connected` | A sender is connected                         |
-| `playing`   | Audio is arriving                             |
-| `client`    | Name of the sender (iPhone)                   |
-| `title`     | Track title                                   |
-| `artist`    | Artist                                        |
-| `album`     | Album                                         |
-| `volume`    | Volume of the sender, 0–100 %                 |
-| `streamUrl` | The URL the satellite fetches                 |
+| State       | Meaning                       |
+| ----------- | ----------------------------- |
+| `connected` | A sender is connected         |
+| `playing`   | Audio is arriving             |
+| `client`    | Name of the sender (iPhone)   |
+| `title`     | Track title                   |
+| `artist`    | Artist                        |
+| `album`     | Album                         |
+| `volume`    | Volume of the sender, 0–100 % |
+| `streamUrl` | The URL the satellite fetches |
 
 `info.connection` is true while the speakers are announced.
 
 ## Troubleshooting
 
-| Symptom                                  | Cause and remedy                                                                                       |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| The speaker does not show up             | iPhone and ioBroker in different networks or VLANs; a firewall blocks UDP 5353 (mDNS)                   |
-| It shows up, but nothing plays           | Look at the log: does the adapter write the URL? Can the satellite reach port 8095 of the ioBroker host? |
-| The iPhone connects and drops at once    | A firewall blocks the RTSP port or UDP; set a fixed RTSP port and open it together with UDP            |
-| Wrong address in the stream URL          | Set _Address of this host for the satellite_                                                            |
-| Dropouts                                 | Weak Wi-Fi of the satellite; raise _Wait for a lost packet_                                             |
+| Symptom                               | Cause and remedy                                                                                         |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| The speaker does not show up          | iPhone and ioBroker in different networks or VLANs; a firewall blocks UDP 5353 (mDNS)                    |
+| It shows up, but nothing plays        | Look at the log: does the adapter write the URL? Can the satellite reach port 8095 of the ioBroker host? |
+| The iPhone connects and drops at once | A firewall blocks the RTSP port or UDP; set a fixed RTSP port and open it together with UDP              |
+| Wrong address in the stream URL       | Set _Address of this host for the satellite_                                                             |
+| Dropouts                              | Weak Wi-Fi of the satellite; raise _Wait for a lost packet_                                              |
 
 ## Provenance
 
@@ -118,6 +118,11 @@ not affiliated with Apple.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.0.3 (2026-11-05)
+
+- (sadam6752-tech) The display shows "AirPlay – <sender>" right away instead of the radio station that played
+  before, and the track title is written again once the satellite has opened the stream
 
 ### 0.0.2 (2026-11-05)
 
