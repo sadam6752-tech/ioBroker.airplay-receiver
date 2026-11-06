@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.0.3",
+        "version": "0.1.0",
         "news": {
+            "0.1.0": {
+                "en": "Any player that takes a URL: ioBroker.assistant satellites, Dune HD and every state with role media.url; MP3 streams work; a pause keeps the stream open for 60 s",
+                "de": "Jeder Player, der eine URL abspielt: Satelliten von ioBroker.assistant, Dune HD und jeder State mit Rolle media.url; MP3-Streams funktionieren; eine Pause hält den Stream 60 s offen",
+                "ru": "Любой плеер, воспроизводящий URL: сателлиты ioBroker.assistant, Dune HD и любое состояние с ролью media.url; MP3-потоки работают; пауза держит поток открытым 60 с",
+                "pt": "Qualquer leitor que reproduza um URL: satélites do ioBroker.assistant, Dune HD e todo estado com a função media.url; fluxos MP3 funcionam; uma pausa mantém o fluxo aberto 60 s",
+                "nl": "Elke speler die een URL afspeelt: satellieten van ioBroker.assistant, Dune HD en elke state met rol media.url; MP3-streams werken; een pauze houdt de stream 60 s open",
+                "fr": "Tout lecteur qui lit une URL : satellites d'ioBroker.assistant, Dune HD et tout état avec le rôle media.url ; les flux MP3 fonctionnent ; une pause garde le flux ouvert 60 s",
+                "it": "Qualsiasi lettore che riproduce un URL: satelliti di ioBroker.assistant, Dune HD e ogni stato con ruolo media.url; i flussi MP3 funzionano; una pausa tiene aperto il flusso 60 s",
+                "es": "Cualquier reproductor que reproduzca una URL: satélites de ioBroker.assistant, Dune HD y todo estado con rol media.url; los flujos MP3 funcionan; una pausa mantiene el flujo abierto 60 s",
+                "pl": "Każdy odtwarzacz odtwarzający URL: satelity ioBroker.assistant, Dune HD i każdy stan z rolą media.url; strumienie MP3 działają; pauza utrzymuje strumień otwarty 60 s",
+                "uk": "Будь-який плеєр, що відтворює URL: сателіти ioBroker.assistant, Dune HD і будь-який стан з роллю media.url; MP3-потоки працюють; пауза тримає потік відкритим 60 с",
+                "zh-cn": "任何可播放 URL 的播放器：ioBroker.assistant 卫星、Dune HD 以及所有角色为 media.url 的状态；MP3 流可用；暂停时流保持打开 60 秒"
+            },
             "0.0.3": {
                 "en": "The display shows \"AirPlay – <sender>\" right away instead of the radio station that played before, and the track title is written again once the satellite has opened the stream",
                 "de": "Das Display zeigt sofort \"AirPlay – <Sender>\" statt des zuvor gespielten Radiosenders, und der Titel wird erneut geschrieben, sobald der Satellit den Stream geöffnet hat",
@@ -57,17 +70,17 @@
             "zh-cn": "AirPlay 接收器"
         },
         "desc": {
-            "en": "Makes the voice satellites of ioBroker.assistant AirPlay speakers: an iPhone or Mac streams music, the satellite plays it",
-            "de": "Macht die Sprachsatelliten von ioBroker.assistant zu AirPlay-Lautsprechern: ein iPhone oder Mac streamt Musik, der Satellit spielt sie ab",
-            "ru": "Превращает голосовые сателлиты ioBroker.assistant в колонки AirPlay: iPhone или Mac передаёт музыку, сателлит её играет",
-            "pt": "Transforma os satélites de voz do ioBroker.assistant em altifalantes AirPlay: um iPhone ou Mac transmite música, o satélite reproduz",
-            "nl": "Maakt van de spraaksatellieten van ioBroker.assistant AirPlay-luidsprekers: een iPhone of Mac streamt muziek, de satelliet speelt die af",
-            "fr": "Transforme les satellites vocaux d'ioBroker.assistant en enceintes AirPlay : un iPhone ou un Mac diffuse la musique, le satellite la joue",
-            "it": "Trasforma i satelliti vocali di ioBroker.assistant in altoparlanti AirPlay: un iPhone o un Mac trasmette la musica, il satellite la riproduce",
-            "es": "Convierte los satélites de voz de ioBroker.assistant en altavoces AirPlay: un iPhone o Mac transmite música y el satélite la reproduce",
-            "pl": "Zamienia satelity głosowe ioBroker.assistant w głośniki AirPlay: iPhone lub Mac przesyła muzykę, a satelita ją odtwarza",
-            "uk": "Перетворює голосові сателіти ioBroker.assistant на колонки AirPlay: iPhone або Mac передає музику, сателіт її відтворює",
-            "zh-cn": "让 ioBroker.assistant 的语音卫星成为 AirPlay 扬声器：iPhone 或 Mac 推送音乐，卫星播放"
+            "en": "AirPlay speakers for ioBroker players: an iPhone or Mac streams music to ioBroker.assistant satellites, Dune HD or any player that takes a URL",
+            "de": "AirPlay-Lautsprecher für ioBroker-Player: ein iPhone oder Mac streamt Musik zu Satelliten von ioBroker.assistant, Dune HD oder jedem Player, der eine URL abspielt",
+            "ru": "Колонки AirPlay для плееров ioBroker: iPhone или Mac передаёт музыку на сателлиты ioBroker.assistant, Dune HD или любой плеер, воспроизводящий URL",
+            "pt": "Altifalantes AirPlay para leitores ioBroker: um iPhone ou Mac transmite música para satélites do ioBroker.assistant, Dune HD ou qualquer leitor que reproduza um URL",
+            "nl": "AirPlay-luidsprekers voor ioBroker-spelers: een iPhone of Mac streamt muziek naar satellieten van ioBroker.assistant, Dune HD of elke speler die een URL afspeelt",
+            "fr": "Enceintes AirPlay pour les lecteurs ioBroker : un iPhone ou un Mac diffuse la musique vers les satellites d'ioBroker.assistant, un Dune HD ou tout lecteur qui lit une URL",
+            "it": "Altoparlanti AirPlay per i lettori ioBroker: un iPhone o un Mac trasmette musica ai satelliti di ioBroker.assistant, a un Dune HD o a qualsiasi lettore che riproduce un URL",
+            "es": "Altavoces AirPlay para reproductores de ioBroker: un iPhone o Mac transmite música a satélites de ioBroker.assistant, Dune HD o cualquier reproductor que reproduzca una URL",
+            "pl": "Głośniki AirPlay dla odtwarzaczy ioBroker: iPhone lub Mac przesyła muzykę do satelitów ioBroker.assistant, Dune HD lub dowolnego odtwarzacza URL",
+            "uk": "Колонки AirPlay для плеєрів ioBroker: iPhone або Mac передає музику на сателіти ioBroker.assistant, Dune HD або будь-який плеєр, що відтворює URL",
+            "zh-cn": "ioBroker 播放器的 AirPlay 扬声器：iPhone 或 Mac 将音乐推送到 ioBroker.assistant 卫星、Dune HD 或任何可播放 URL 的播放器"
         },
         "authors": [
             "sadam6752-tech <sadam6752@gmail.com>"
@@ -80,7 +93,9 @@
             "esphome",
             "satellite",
             "ffmpeg",
-            "music"
+            "music",
+            "dune",
+            "media player"
         ],
         "licenseInformation": {
             "type": "free",
@@ -120,12 +135,10 @@
         "port": 8095,
         "bind": "0.0.0.0",
         "urlHost": "",
-        "sampleRate": 48000,
-        "channels": 1,
         "syncVolume": true,
         "holdMs": 350,
         "prerollMs": 1500,
-        "idleStop": 15,
+        "idleStop": 60,
         "ffmpegPath": ""
     },
     "objects": [],

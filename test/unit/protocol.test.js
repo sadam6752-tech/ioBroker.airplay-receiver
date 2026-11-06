@@ -9,7 +9,19 @@ const { parseSdp } = require('../../lib/sdp');
 const { Playout, seqDiff } = require('../../lib/playout');
 const { escapeFrame, silenceFrame } = require('../../lib/alac');
 const { vint, header } = require('../../lib/mkv');
-const { normalizeReceivers, playersFromIds, volumeLevel, displayTitle, fitTitle, streamHost, toId } = require('../../lib/config');
+const {
+    normalizeReceivers,
+    migrateRows,
+    playersFromIds,
+    urlStateChoices,
+    volumeLevel,
+    scaleVolume,
+    parseStopValue,
+    displayTitle,
+    fitTitle,
+    streamHost,
+    toId,
+} = require('../../lib/config');
 const { raopTxt, serviceName, mdnsHost } = require('../../lib/mdns');
 
 describe('RAOP crypto', () => {
@@ -171,19 +183,102 @@ describe('Playout', () => {
 });
 
 describe('Settings', () => {
-    it('reads the receiver table', () => {
+    const SAT = 'assistant.0.satellites.Gast.controls';
+
+    it('fills an assistant satellite from its play URL state, as before', () => {
+        const [r] = normalizeReceivers([{ name: 'Gast', urlState: `${SAT}.waveshare_voice_eb1614.url` }]).receivers;
+        assert.deepEqual(r, {
+            id: 'gast',
+            name: 'Gast',
+            kind: 'assistant',
+            urlState: `${SAT}.waveshare_voice_eb1614.url`,
+            stopState: `${SAT}.waveshare_voice_eb1614.url`,
+            stopValue: 'stop',
+            volumeState: `${SAT}.waveshare_voice_eb1614.volume`,
+            titleState: `${SAT}.media_title`,
+            titleBytes: 48,
+            codec: 'flac',
+            sampleRate: 48000,
+            channels: 1,
+            rtspPort: 0,
+        });
+    });
+
+    it('reads the rows of 0.0.x (player column) the same way and converts them once', () => {
+        const old = [{ enabled: true, name: 'Gast', player: 'Gast.waveshare_voice_eb1614', format: 'flac', rtspPort: 0 }];
+        const [a] = normalizeReceivers(old).receivers;
+        const rows = migrateRows(old, 'assistant.0');
+        assert.deepEqual(rows, [
+            { enabled: true, name: 'Gast', rtspPort: 0, urlState: `${SAT}.waveshare_voice_eb1614.url`, stream: 'auto' },
+        ]);
+        assert.deepEqual(normalizeReceivers(rows).receivers, [a]);
+        assert.equal(migrateRows(rows, 'assistant.0'), null);
+    });
+
+    it('fills Dune HD: stop button, volume 0 … 100, MP3 stereo, no title', () => {
+        const [r] = normalizeReceivers([{ name: 'Kino', urlState: 'dune-hd-remote.0.media.playUrl' }]).receivers;
+        assert.equal(r.kind, 'dune');
+        assert.equal(r.stopState, 'dune-hd-remote.0.control.stop');
+        assert.equal(r.stopValue, true);
+        assert.equal(r.volumeState, 'dune-hd-remote.0.control.volume');
+        assert.equal(r.titleState, '');
+        assert.deepEqual([r.codec, r.sampleRate, r.channels], ['mp3', 44100, 2]);
+    });
+
+    it('takes what is typed over the preset; "-" switches a preset state off', () => {
+        const [a, b] = normalizeReceivers([
+            { name: 'Gast', urlState: `${SAT}.p.url`, stream: 'mp3/48000/2', volumeState: '-', titleState: 'x.0.t' },
+            { name: 'Cast', urlState: 'cast.0.tv.player.url2play', stopState: 'cast.0.tv.player.stop' },
+        ]).receivers;
+        assert.deepEqual([a.codec, a.sampleRate, a.channels, a.volumeState], ['mp3', 48000, 2, '']);
+        // a title state of its own has no byte limit
+        assert.deepEqual([a.titleState, a.titleBytes], ['x.0.t', 0]);
+        // any other player: MP3 like a radio; a stop state of its own without a value is a button
+        assert.deepEqual([b.kind, b.codec, b.stopValue, b.volumeState], ['custom', 'mp3', true, '']);
+        const [c] = normalizeReceivers([{ name: 'C', urlState: 'cast.0.tv.player.url2play' }]).receivers;
+        assert.deepEqual([c.stopState, c.stopValue], ['cast.0.tv.player.url2play', '']);
+        assert.deepEqual([parseStopValue('false'), parseStopValue('0'), parseStopValue('stop')], [false, 0, 'stop']);
+    });
+
+    it('skips rows without name, without a valid play URL state, or with a name used twice', () => {
         const { receivers, problems } = normalizeReceivers([
-            { enabled: true, name: 'Gast', player: 'Gast.waveshare_voice_eb1614', format: 'flac', rtspPort: 0 },
-            { enabled: true, name: 'Gast', player: 'Gast.other' },
-            { enabled: true, name: '', player: 'x.y' },
-            { enabled: true, name: 'Küche', player: 'nonsense' },
-            { enabled: false, name: 'Off', player: 'a.b' },
+            { enabled: true, name: 'Gast', urlState: `${SAT}.p.url` },
+            { enabled: true, name: 'Gast', urlState: `${SAT}.q.url` },
+            { enabled: true, name: '', urlState: `${SAT}.p.url` },
+            { enabled: true, name: 'Küche', urlState: 'not an id' },
+            { enabled: false, name: 'Off', urlState: 'a.b' },
         ]);
-        assert.deepEqual(receivers, [
-            { id: 'gast', name: 'Gast', satellite: 'Gast', player: 'waveshare_voice_eb1614', rtspPort: 0, format: 'flac' },
-        ]);
+        assert.equal(receivers.length, 1);
         assert.equal(problems.length, 3);
         assert.equal(toId('Küche Süd'), 'kueche_sued');
+    });
+
+    it('offers every writable media.url state, not its own', () => {
+        const state = (role, write = true, name = 'Play') => ({ type: 'state', common: { role, write, name } });
+        assert.deepEqual(
+            urlStateChoices(
+                {
+                    [`${SAT}.p.url`]: state('media.url', true, { en: 'Play a URL' }),
+                    'dune-hd-remote.0.media.playUrl': state('media.url'),
+                    'dune-hd-remote.0.status.currentUrl': state('media.url', false),
+                    'dune-hd-remote.0.media.seek': state('media.seek'),
+                    'airplay-receiver.0.receivers.gast.streamUrl': state('media.url'),
+                },
+                'airplay-receiver.0',
+            ),
+            [
+                { label: `${SAT}.p.url (Play a URL)`, value: `${SAT}.p.url` },
+                { label: 'dune-hd-remote.0.media.playUrl (Play)', value: 'dune-hd-remote.0.media.playUrl' },
+            ],
+        );
+    });
+
+    it('scales the volume to the range of the target', () => {
+        assert.equal(scaleVolume(0.5), 0.5);
+        assert.equal(scaleVolume(0.5, { min: 0, max: 100 }), 50);
+        assert.equal(scaleVolume(0.333, { min: 0, max: 1 }), 0.33);
+        assert.equal(scaleVolume(1, { min: -20, max: 0 }), 0);
+        assert.equal(scaleVolume(2, { max: 100 }), 100);
     });
 
     it('finds the players of ioBroker.assistant', () => {

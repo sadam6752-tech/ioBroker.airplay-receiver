@@ -1,7 +1,7 @@
 {
   "name": "iobroker.airplay-receiver",
-  "version": "0.0.3",
-  "description": "Makes ioBroker.assistant voice satellites AirPlay speakers: an iPhone or Mac streams music, the satellite plays it",
+  "version": "0.1.0",
+  "description": "AirPlay speakers for ioBroker players: an iPhone or Mac streams music to ioBroker.assistant satellites, Dune HD or any player that takes a URL",
   "author": {
     "name": "sadam6752-tech",
     "email": "sadam6752@gmail.com"
@@ -18,7 +18,9 @@
     "esphome",
     "satellite",
     "ffmpeg",
-    "music"
+    "music",
+    "dune",
+    "media-player"
   ],
   "repository": {
     "type": "git",

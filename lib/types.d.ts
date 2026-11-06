@@ -30,12 +30,26 @@ export interface ReceiverConfig {
     id: string;
     /** AirPlay name shown on the iPhone */
     name: string;
-    /** Satellite id below assistant.X.satellites */
-    satellite: string;
-    /** Media player object id below satellites.<id>.controls */
-    player: string;
+    /** Which preset filled the empty fields */
+    kind: 'assistant' | 'dune' | 'custom';
+    /** State that takes the stream URL */
+    urlState: string;
+    /** State written to stop the target */
+    stopState: string;
+    /** Value written to the stop state */
+    stopValue: ioBroker.StateValue;
+    /** Volume state of the target, empty = none */
+    volumeState: string;
+    /** Title state of the target, empty = none */
+    titleState: string;
+    /** Byte limit of the title text, 0 = none */
+    titleBytes: number;
+    /** Output codec */
+    codec: 'flac' | 'mp3';
+    /** Output sample rate */
+    sampleRate: number;
+    /** Output channels */
+    channels: number;
     /** RTSP port, 0 = any free port */
     rtspPort: number;
-    /** Output format */
-    format: 'flac' | 'mp3';
 }

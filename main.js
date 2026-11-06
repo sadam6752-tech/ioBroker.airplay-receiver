@@ -1,8 +1,9 @@
 'use strict';
 
 /*
- * ioBroker.airplay-receiver: every configured voice satellite of ioBroker.assistant becomes an AirPlay 1 speaker.
- * iPhone → RTSP/RTP (ALAC, AES) → jitter buffer → ffmpeg (FLAC/MP3) → HTTP → the satellite's media player.
+ * ioBroker.airplay-receiver: AirPlay 1 speakers whose audio plays on any ioBroker player that takes a URL
+ * (ioBroker.assistant satellites, Dune HD, others with a `media.url` state).
+ * iPhone → RTSP/RTP (ALAC, AES) → jitter buffer → ffmpeg (FLAC/MP3) → HTTP → the player.
  */
 
 const utils = require('@iobroker/adapter-core');
@@ -13,12 +14,14 @@ const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
 const {
     normalizeReceivers,
+    migrateRows,
     playersFromIds,
+    urlStateChoices,
     volumeLevel,
+    scaleVolume,
     displayTitle,
     fitTitle,
     streamHost,
-    toId,
 } = require('./lib/config');
 
 /**
@@ -31,10 +34,11 @@ const {
  * @property {RaopReceiver} raop - AirPlay side
  * @property {Channel} channel - HTTP side
  * @property {string} local - Local address of the current sender connection
- * @property {boolean} started - The satellite was told to play
+ * @property {boolean} started - The player was told to play
  * @property {string} shownTitle - Text on the display
  * @property {boolean} hasMetadata - The sender named the track in this session
- * @property {unknown} titleTimer - Second write of the title after the satellite connected
+ * @property {unknown} titleTimer - Second write of the title after the player connected
+ * @property {{min?: unknown, max?: unknown} | null} volumeCommon - Range of the volume state (read once)
  */
 
 class AirplayReceiver extends utils.Adapter {
@@ -72,13 +76,14 @@ class AirplayReceiver extends utils.Adapter {
 
     async onReady() {
         await this.setState('info.connection', { val: false, ack: true });
+        await this.migrateConfig();
         const ffmpegPath = String(this.config.ffmpegPath || '').trim() || String(require('ffmpeg-static') || '');
         if (!ffmpegPath) {
             this.log.error('No ffmpeg binary for this platform; set the path of an installed ffmpeg in the settings');
             return;
         }
 
-        let { receivers, problems } = normalizeReceivers(this.config.receivers);
+        let { receivers, problems } = normalizeReceivers(this.config.receivers, this.assistant);
         for (const p of problems) {
             this.log.warn(`Receiver skipped: ${p}`);
         }
@@ -89,9 +94,7 @@ class AirplayReceiver extends utils.Adapter {
             }
         }
         if (!receivers.length) {
-            this.log.warn(
-                `No receiver: configure one in the settings or check that ${this.assistant} has a satellite with a media player`,
-            );
+            this.log.warn('No receiver: add a row with the state that plays a URL in the settings');
             return;
         }
 
@@ -120,6 +123,31 @@ class AirplayReceiver extends utils.Adapter {
     }
 
     /**
+     * Rows of version 0.0.x name a satellite player; they are written once in the new form (play URL state). This run
+     * goes on with the new rows; js-controller may restart the instance because its object changed.
+     */
+    async migrateConfig() {
+        const rows = migrateRows(this.config.receivers, this.assistant);
+        if (!rows) {
+            return;
+        }
+        this.config.receivers = rows;
+        try {
+            // the whole object: extendForeignObject would merge the old row into the new one
+            const id = `system.adapter.${this.namespace}`;
+            const obj = await this.getForeignObjectAsync(id);
+            if (!obj) {
+                return;
+            }
+            obj.native.receivers = rows;
+            await this.setForeignObjectAsync(id, obj);
+            this.log.info('The receiver table was converted to play URL states (one-time).');
+        } catch (e) {
+            this.log.warn(`Cannot convert the receiver table: ${e.message}`);
+        }
+    }
+
+    /**
      * One receiver per media player of ioBroker.assistant, named after its satellite.
      *
      * @returns {Promise<ReceiverConfig[]>} Receivers
@@ -128,16 +156,18 @@ class AirplayReceiver extends utils.Adapter {
         try {
             const players = playersFromIds(this.assistant, await this.playerStateIds());
             const used = new Set();
-            /** @type {ReceiverConfig[]} */
-            const out = [];
+            const rows = [];
             for (const p of players) {
                 if (used.has(p.satellite)) {
                     continue; // one speaker per satellite
                 }
                 used.add(p.satellite);
-                out.push({ id: toId(p.satellite), name: p.satellite, ...p, rtspPort: 0, format: 'flac' });
+                rows.push({
+                    name: p.satellite,
+                    urlState: `${this.assistant}.satellites.${p.satellite}.controls.${p.player}.url`,
+                });
             }
-            return out;
+            return normalizeReceivers(rows, this.assistant).receivers;
         } catch (e) {
             this.log.warn(`Search for satellites failed: ${e.message}`);
             return [];
@@ -169,7 +199,7 @@ class AirplayReceiver extends utils.Adapter {
         for (const r of receivers) {
             await this.extendObject(`receivers.${r.id}`, {
                 type: 'channel',
-                common: { name: r.name, desc: `${this.assistant}.satellites.${r.satellite}.controls.${r.player}` },
+                common: { name: r.name, desc: r.urlState },
                 native: {},
             });
             for (const [key, type, role, def] of states) {
@@ -212,18 +242,19 @@ class AirplayReceiver extends utils.Adapter {
             mac,
             port: cfg.rtspPort,
             holdMs: Math.max(50, Number(this.config.holdMs) || 350),
-            idleMs: Math.max(2, Number(this.config.idleStop) || 15) * 1000,
+            // a pause keeps the stream open with silence for this long, then the player is stopped
+            idleMs: Math.max(2, Number(this.config.idleStop) || 60) * 1000,
             timers: this.timers,
             log: this.log,
         });
         const channel = new Channel({
             id: cfg.id,
             name: cfg.name,
-            codec: cfg.format,
-            sampleRate: Number(this.config.sampleRate) || 48000,
-            channels: Number(this.config.channels) === 2 ? 2 : 1,
+            codec: cfg.codec,
+            sampleRate: cfg.sampleRate,
+            channels: cfg.channels,
             prerollMs: Math.max(0, Number(this.config.prerollMs ?? 1500)),
-            // the satellite may replace the display text while it starts the new stream: write ours again
+            // the player may replace the display text while it starts the new stream: write ours again
             onListener: () => this.refreshTitle(r),
             ffmpegPath,
             log: this.log,
@@ -239,6 +270,7 @@ class AirplayReceiver extends utils.Adapter {
             shownTitle: '',
             hasMetadata: false,
             titleTimer: null,
+            volumeCommon: null,
         };
         this.running.push(r);
         const base = `receivers.${cfg.id}`;
@@ -252,7 +284,7 @@ class AirplayReceiver extends utils.Adapter {
             set('client', s.client);
             // the display still shows what played before (a radio station) until the sender names the track
             if (!r.hasMetadata) {
-                void this.showTitle(r, fitTitle(`AirPlay – ${s.client}`));
+                void this.showTitle(r, fitTitle(`AirPlay – ${s.client}`, cfg.titleBytes));
             }
         });
         raop.on('frame', frame => channel.push(frame));
@@ -268,15 +300,15 @@ class AirplayReceiver extends utils.Adapter {
         raop.on('volume', db => {
             const level = volumeLevel(db);
             set('volume', Math.round(level * 100));
-            if (this.config.syncVolume !== false) {
-                void this.writeSatellite(r, `controls.${cfg.player}.volume`, level);
+            if (this.config.syncVolume !== false && cfg.volumeState) {
+                void this.setVolume(r, level);
             }
         });
         raop.on('metadata', info => {
             set('title', info.title || '');
             set('artist', info.artist || '');
             set('album', info.album || '');
-            const text = displayTitle(info);
+            const text = displayTitle(info, cfg.titleBytes);
             if (text) {
                 r.hasMetadata = true;
                 void this.showTitle(r, text);
@@ -305,20 +337,21 @@ class AirplayReceiver extends utils.Adapter {
         this.announcer?.publish(mac, cfg.name, port, e => this.log.warn(`${cfg.name}: mDNS: ${e.message}`));
         set('streamUrl', this.streamUrl(r));
         this.log.info(
-            `AirPlay speaker "${cfg.name}" on port ${port} → ${this.assistant}.satellites.${cfg.satellite}.controls.${cfg.player}`,
+            `AirPlay speaker "${cfg.name}" on port ${port} → ${cfg.urlState} ` +
+                `(${cfg.codec.toUpperCase()} ${cfg.sampleRate} Hz ${cfg.channels === 2 ? 'stereo' : 'mono'})`,
         );
     }
 
     /**
      * @param {Running} r - Receiver
-     * @returns {string} URL the satellite fetches
+     * @returns {string} URL the player fetches
      */
     streamUrl(r) {
         return `http://${streamHost(this.config.urlHost, r.local)}:${this.httpPort}${r.channel.path}`;
     }
 
     /**
-     * Tells the satellite to fetch the stream.
+     * Tells the player to fetch the stream.
      *
      * @param {Running} r - Receiver
      */
@@ -326,35 +359,35 @@ class AirplayReceiver extends utils.Adapter {
         const url = this.streamUrl(r);
         r.started = true;
         await this.setState(`receivers.${r.cfg.id}.streamUrl`, { val: url, ack: true });
-        this.log.info(`${r.cfg.name}: playing on ${r.cfg.satellite} (${url})`);
-        await this.writeSatellite(r, `controls.${r.cfg.player}.url`, url);
+        this.log.info(`${r.cfg.name}: playing on ${r.cfg.urlState} (${url})`);
+        await this.writeTarget(r.cfg.urlState, url);
         if (r.shownTitle) {
-            await this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
+            await this.writeTarget(r.cfg.titleState, r.shownTitle, true);
         }
     }
 
     /**
-     * The satellite opened the stream: while it starts playing it may still show (or set) the text of what played
+     * The player opened the stream: while it starts playing it may still show (or set) the text of what played
      * before, so the current title is written now and once more two seconds later.
      *
      * @param {Running} r - Receiver
      */
     refreshTitle(r) {
-        if (!r.shownTitle) {
+        if (!r.shownTitle || !r.cfg.titleState) {
             return;
         }
-        void this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
+        void this.writeTarget(r.cfg.titleState, r.shownTitle, true);
         this.timers.clearTimeout(r.titleTimer);
         r.titleTimer = this.timers.setTimeout(() => {
             r.titleTimer = null;
             if (r.shownTitle) {
-                void this.writeSatellite(r, 'controls.media_title', r.shownTitle, true);
+                void this.writeTarget(r.cfg.titleState, r.shownTitle, true);
             }
         }, 2000);
     }
 
     /**
-     * Stops the satellite, if this adapter started it.
+     * Stops the player, if this adapter started it.
      *
      * @param {Running} r - Receiver
      */
@@ -365,7 +398,7 @@ class AirplayReceiver extends utils.Adapter {
         }
         r.started = false;
         this.log.info(`${r.cfg.name}: stopped`);
-        await this.writeSatellite(r, `controls.${r.cfg.player}.url`, 'stop');
+        await this.writeTarget(r.cfg.stopState, r.cfg.stopValue);
     }
 
     /**
@@ -374,19 +407,38 @@ class AirplayReceiver extends utils.Adapter {
      */
     async showTitle(r, text) {
         r.shownTitle = text;
-        await this.writeSatellite(r, 'controls.media_title', text, true);
+        await this.writeTarget(r.cfg.titleState, text, true);
     }
 
     /**
-     * Writes a state of the satellite (a command, ack false).
+     * The AirPlay volume on the player's own scale (its `min` … `max`).
      *
      * @param {Running} r - Receiver
-     * @param {string} rel - Id below `satellites.<sat>`
+     * @param {number} level - 0 … 1
+     */
+    async setVolume(r, level) {
+        if (!r.volumeCommon) {
+            try {
+                const obj = await this.getForeignObjectAsync(r.cfg.volumeState);
+                r.volumeCommon = /** @type {{min?: unknown, max?: unknown}} */ (obj?.common || {});
+            } catch {
+                r.volumeCommon = {};
+            }
+        }
+        await this.writeTarget(r.cfg.volumeState, scaleVolume(level, r.volumeCommon));
+    }
+
+    /**
+     * Writes a state of the player (a command, ack false).
+     *
+     * @param {string} id - State id; empty = nothing to do
      * @param {ioBroker.StateValue} val - Value
      * @param {boolean} [optional] - Skip silently when the state does not exist
      */
-    async writeSatellite(r, rel, val, optional = false) {
-        const id = `${this.assistant}.satellites.${r.cfg.satellite}.${rel}`;
+    async writeTarget(id, val, optional = false) {
+        if (!id) {
+            return;
+        }
         try {
             if (optional && !(await this.getForeignObjectAsync(id))) {
                 return;
@@ -406,11 +458,10 @@ class AirplayReceiver extends utils.Adapter {
         }
         const answer = result => obj.callback && this.sendTo(obj.from, obj.command, result, obj.callback);
         try {
-            if (obj.command === 'listPlayers') {
-                const players = playersFromIds(this.assistant, await this.playerStateIds());
-                answer(
-                    players.map(p => ({ label: `${p.satellite} / ${p.player}`, value: `${p.satellite}.${p.player}` })),
-                );
+            if (obj.command === 'listUrlStates' || obj.command === 'listPlayers') {
+                // every writable state with role media.url: assistant players, Dune HD, others
+                const objs = await this.getForeignObjectsAsync('*', 'state');
+                answer(urlStateChoices(objs, this.namespace));
             } else {
                 answer({ error: `Unknown command ${obj.command}` });
             }

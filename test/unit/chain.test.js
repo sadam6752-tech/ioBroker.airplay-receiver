@@ -56,8 +56,12 @@ function longestSilence(s, from, to) {
 describe('AirPlay chain (sender → receiver → ffmpeg → HTTP)', function () {
     this.timeout(60_000);
 
-    for (const encrypt of [true, false]) {
-        it(`plays ${encrypt ? 'encrypted' : 'plain'} audio without gaps although packets get lost`, async () => {
+    for (const [encrypt, codec] of /** @type {const} */ ([
+        [true, 'flac'],
+        [false, 'flac'],
+        [true, 'mp3'],
+    ])) {
+        it(`plays ${encrypt ? 'encrypted' : 'plain'} audio as ${codec} without gaps although packets get lost`, async () => {
             const receiver = new RaopReceiver({
                 name: 'Test',
                 mac: macFor('Test'),
@@ -71,7 +75,7 @@ describe('AirPlay chain (sender → receiver → ffmpeg → HTTP)', function () 
             const channel = new Channel({
                 id: 'test',
                 name: 'Test',
-                codec: 'flac',
+                codec,
                 sampleRate: 48000,
                 channels: 1,
                 prerollMs: 1500,
@@ -142,8 +146,8 @@ describe('AirPlay chain (sender → receiver → ffmpeg → HTTP)', function () 
                 assert.deepEqual(events.meta, [{ title: 'Song', artist: 'Band' }]);
                 assert.equal(events.active[0], true);
                 assert.equal(events.end, 1);
-                assert.equal(response?.headers['content-type'], 'audio/flac');
-                assert.equal(probeType, 'audio/flac');
+                assert.equal(response?.headers['content-type'], codec === 'mp3' ? 'audio/mpeg' : 'audio/flac');
+                assert.equal(probeType, codec === 'mp3' ? 'audio/mpeg' : 'audio/flac');
                 assert.ok(sender.resendRequests > 0, 'no retransmission was requested');
                 assert.ok(sender.timingRequests > 0, 'no timing request was sent');
                 assert.ok(receiver.playout.stats.lost === 0 || receiver.playout.stats.recovered > 0);
