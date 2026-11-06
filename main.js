@@ -12,6 +12,7 @@ const { Channel, StreamServer } = require('./lib/streamer');
 const { Announcer } = require('./lib/mdns');
 const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
+const { usedTcpPorts, bindOf } = require('./lib/resources');
 const {
     normalizeReceivers,
     migrateRows,
@@ -41,6 +42,19 @@ const {
  * @property {{min?: unknown, max?: unknown} | null} volumeCommon - Range of the volume state (read once)
  */
 
+/**
+ * @param {unknown} adapter - Adapter
+ * @returns {import('./lib/types').UsedResourcesApi | null} Its registry calls, or null without registry
+ */
+function registryOf(adapter) {
+    const api = /** @type {import('./lib/types').UsedResourcesApi} */ (adapter);
+    try {
+        return api.supportsFeature?.('CONTROLLER_USED_RESOURCES') ? api : null;
+    } catch {
+        return null;
+    }
+}
+
 class AirplayReceiver extends utils.Adapter {
     /**
      * @param {Partial<utils.AdapterOptions>} [options] - Adapter options
@@ -57,6 +71,58 @@ class AirplayReceiver extends utils.Adapter {
         this.on('ready', this.onReady.bind(this));
         this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
+    }
+
+    /**
+     * Used resources registry of js-controller 8 (doc/used-resources.md); the calls are missing in older
+     * controllers and in the typings of 7.
+     *
+     * @returns {import('./lib/types').UsedResourcesApi | null} The registry calls, or null without registry
+     */
+    get registry() {
+        return registryOf(this);
+    }
+
+    /**
+     * Warns before listening when another running instance declares the TCP port.
+     *
+     * @param {number} port - Port
+     * @param {string} bind - Listen address, empty = every address
+     * @param {string} what - What the port is for (log)
+     */
+    async checkPort(port, bind, what) {
+        const reg = this.registry;
+        if (!reg || !(port > 0)) {
+            return;
+        }
+        const b = bindOf(bind || '');
+        try {
+            const held = await reg.checkUsedResource('tcpPort', b ? { port, bind: b } : { port });
+            if (held.length) {
+                this.log.warn(`${what}: TCP port ${port} is already used by ${held.map(h => h.instance).join(', ')}`);
+            }
+        } catch (e) {
+            this.log.debug(`Used resources: check of port ${port} failed: ${e.message}`);
+        }
+    }
+
+    /**
+     * Registers the TCP ports fixed by the configuration once they are open.
+     *
+     * @param {ReceiverConfig[]} receivers - Running receivers
+     */
+    async registerPorts(receivers) {
+        const reg = this.registry;
+        if (!reg) {
+            return;
+        }
+        for (const data of usedTcpPorts(this.httpPort, String(this.config.bind || ''), receivers)) {
+            try {
+                await reg.registerUsedResource('tcpPort', data);
+            } catch (e) {
+                this.log.debug(`Used resources: port ${data.port} not registered: ${e.message}`);
+            }
+        }
     }
 
     /** @returns {string} Instance of ioBroker.assistant */
@@ -101,6 +167,7 @@ class AirplayReceiver extends utils.Adapter {
         await this.createObjects(receivers);
 
         this.http = new StreamServer(this.log);
+        await this.checkPort(Number(this.config.port) || 8095, String(this.config.bind || ''), 'HTTP');
         try {
             this.httpPort = await this.http.listen(
                 Number(this.config.port) || 8095,
@@ -119,6 +186,7 @@ class AirplayReceiver extends utils.Adapter {
                 this.log.error(`${cfg.name}: cannot start: ${e.message}`);
             }
         }
+        await this.registerPorts(this.running.filter(r => r.raop.port).map(r => r.cfg));
         await this.setState('info.connection', { val: this.running.length > 0, ack: true });
     }
 
@@ -333,6 +401,7 @@ class AirplayReceiver extends utils.Adapter {
             void this.showTitle(r, '');
         });
 
+        await this.checkPort(cfg.rtspPort, '', `${cfg.name}: RTSP`);
         const port = await raop.start();
         this.announcer?.publish(mac, cfg.name, port, e => this.log.warn(`${cfg.name}: mDNS: ${e.message}`));
         set('streamUrl', this.streamUrl(r));

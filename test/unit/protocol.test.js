@@ -309,3 +309,25 @@ describe('Settings', () => {
         assert.equal(streamHost('', '::ffff:10.0.0.15'), '10.0.0.15');
     });
 });
+
+describe('Used resources', () => {
+    const { usedTcpPorts } = require('../../lib/resources');
+
+    it('registers the HTTP port and fixed RTSP ports only', () => {
+        assert.deepEqual(usedTcpPorts(8095, '0.0.0.0', [{ rtspPort: 0 }, { rtspPort: 47125 }]), [
+            { port: 8095 },
+            { port: 47125 },
+        ]);
+    });
+
+    it('names a specific listen address and skips duplicates', () => {
+        assert.deepEqual(usedTcpPorts(8095, '192.168.1.15', [{ rtspPort: 47125 }, { rtspPort: 47125 }]), [
+            { port: 8095, bind: '192.168.1.15' },
+            { port: 47125 },
+        ]);
+    });
+
+    it('registers nothing without a valid port', () => {
+        assert.deepEqual(usedTcpPorts(0, '', [{ rtspPort: 0 }, { rtspPort: 70000 }]), []);
+    });
+});

@@ -53,3 +53,13 @@ export interface ReceiverConfig {
     /** RTSP port, 0 = any free port */
     rtspPort: number;
 }
+
+/** The used resources calls of js-controller 8 (not in the typings of 7) */
+export interface UsedResourcesApi {
+    /** Whether the controller has a feature */
+    supportsFeature?: (feature: string) => boolean;
+    /** Other running instances that declare the port */
+    checkUsedResource: (type: 'tcpPort', data: { port: number; bind?: string }) => Promise<{ instance: string }[]>;
+    /** Declares a port of this instance */
+    registerUsedResource: (type: 'tcpPort', data: { port: number; bind?: string }) => Promise<void>;
+}

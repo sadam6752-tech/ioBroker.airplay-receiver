@@ -127,6 +127,14 @@ For every speaker below `airplay-receiver.0.receivers.<name>`:
 
 `info.connection` is true while the speakers are announced.
 
+## Used ports
+
+With js-controller 8 the adapter declares its fixed ports in the used resources registry of the host
+(`system.host.<host>.usedResources.tcpPort`), so the admin shows them as occupied: the HTTP port of the streams and
+every fixed RTSP port. RTSP port 0, the RTP UDP ports (chosen by the system) and mDNS (UDP 5353, shared) are not
+declared. Before opening a port the adapter warns when another instance declares it. Older controllers are not
+affected.
+
 ## Troubleshooting
 
 | Symptom                               | Cause and remedy                                                                                      |
@@ -151,6 +159,10 @@ not affiliated with Apple.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.1.1 (2026-11-06)
+
+- (sadam6752-tech) Fixed ports are declared in the used resources registry of js-controller 8
 
 ### 0.1.0 (2026-11-06)
 

@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
+            "0.1.1": {
+                "en": "Fixed ports are declared in the used resources registry of js-controller 8",
+                "de": "Feste Ports werden in der Registry der belegten Ressourcen von js-controller 8 eingetragen",
+                "ru": "Фиксированные порты регистрируются в реестре занятых ресурсов js-controller 8",
+                "pt": "As portas fixas são declaradas no registo de recursos usados do js-controller 8",
+                "nl": "Vaste poorten worden opgegeven in het register van gebruikte bronnen van js-controller 8",
+                "fr": "Les ports fixes sont déclarés dans le registre des ressources utilisées de js-controller 8",
+                "it": "Le porte fisse sono dichiarate nel registro delle risorse usate di js-controller 8",
+                "es": "Los puertos fijos se declaran en el registro de recursos usados de js-controller 8",
+                "pl": "Stałe porty są zgłaszane w rejestrze używanych zasobów js-controller 8",
+                "uk": "Фіксовані порти реєструються в реєстрі зайнятих ресурсів js-controller 8",
+                "zh-cn": "固定端口登记到 js-controller 8 的已用资源注册表中"
+            },
             "0.1.0": {
                 "en": "Any player that takes a URL: ioBroker.assistant satellites, Dune HD and every state with role media.url; MP3 streams work; a pause keeps the stream open for 60 s",
                 "de": "Jeder Player, der eine URL abspielt: Satelliten von ioBroker.assistant, Dune HD und jeder State mit Rolle media.url; MP3-Streams funktionieren; eine Pause hält den Stream 60 s offen",
@@ -126,7 +139,8 @@
                 "admin": ">=7.6.20"
             }
         ],
-        "messagebox": true
+        "messagebox": true,
+        "declareUsedResources": true
     },
     "native": {
         "receivers": [],
