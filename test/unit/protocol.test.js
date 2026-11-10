@@ -11,6 +11,7 @@ const { escapeFrame, silenceFrame } = require('../../lib/alac');
 const { vint, header } = require('../../lib/mkv');
 const {
     normalizeReceivers,
+    presetFor,
     migrateRows,
     playersFromIds,
     urlStateChoices,
@@ -223,6 +224,30 @@ describe('Settings', () => {
         assert.equal(r.volumeState, 'dune-hd-remote.0.control.volume');
         assert.equal(r.titleState, '');
         assert.deepEqual([r.codec, r.sampleRate, r.channels], ['mp3', 44100, 2]);
+    });
+
+    it('fills ioBroker.satellite-display: stop button, volume 0 … 100, title 48 bytes, FLAC mono', () => {
+        const base = 'satellite-display.0.satellites.kueche';
+        const [r] = normalizeReceivers([{ name: 'Küche', urlState: `${base}.media.url` }]).receivers;
+        assert.deepEqual(r, {
+            id: 'kueche',
+            name: 'Küche',
+            kind: 'satellite-display',
+            urlState: `${base}.media.url`,
+            stopState: `${base}.media.stop`,
+            stopValue: true,
+            volumeState: `${base}.media.volume`,
+            titleState: `${base}.media.title`,
+            titleBytes: 48,
+            codec: 'flac',
+            sampleRate: 48000,
+            channels: 1,
+            rtspPort: 0,
+        });
+        assert.equal(presetFor('satellite-display.1.satellites.gast.media.url').kind, 'satellite-display');
+        // other states of the panel are no preset
+        assert.equal(presetFor(`${base}.media.title`).kind, 'custom');
+        assert.equal(presetFor('satellite-display.0.satellites.a.b.media.url').kind, 'custom');
     });
 
     it('takes what is typed over the preset; "-" switches a preset state off', () => {

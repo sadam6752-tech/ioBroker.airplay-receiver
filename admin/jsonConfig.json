@@ -8,7 +8,7 @@
             "items": {
                 "_speakersHelp": {
                     "type": "staticText",
-                    "text": "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.",
+                    "text": "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant, panels of ioBroker.satellite-display and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.",
                     "xs": 12,
                     "sm": 12,
                     "md": 12,

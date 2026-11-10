@@ -1,6 +1,6 @@
 {
     "Speakers": "Lautsprecher",
-    "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.": "Eine Zeile pro AirPlay-Lautsprecher: der Name auf dem iPhone und der State, der eine URL abspielt. Satelliten von ioBroker.assistant und Dune HD füllen Stopp, Lautstärke, Titel und Stream selbst aus; ein Feld setzen, um es zu ändern, oder - für keines.",
+    "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant, panels of ioBroker.satellite-display and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.": "Eine Zeile pro AirPlay-Lautsprecher: der Name auf dem iPhone und der State, der eine URL abspielt. Satelliten von ioBroker.assistant, Panels von ioBroker.satellite-display und Dune HD füllen Stopp, Lautstärke, Titel und Stream selbst aus; ein Feld setzen, um es zu ändern, oder - für keines.",
     "Active": "Aktiv",
     "AirPlay name": "AirPlay-Name",
     "Play URL state": "State zum Abspielen einer URL",

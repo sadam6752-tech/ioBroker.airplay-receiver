@@ -1,6 +1,6 @@
 {
     "Speakers": "扬声器",
-    "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.": "每行一个 AirPlay 扬声器：iPhone 上显示的名称和播放 URL 的状态。ioBroker.assistant 卫星和 Dune HD 会自动填写停止、音量、标题和流；填写字段可覆盖，填 - 表示不使用。",
+    "One row per AirPlay speaker: the name on the iPhone and the state that plays a URL. Satellites of ioBroker.assistant, panels of ioBroker.satellite-display and Dune HD fill stop, volume, title and stream by themselves; set a field to override it, or - for none.": "每行一个 AirPlay 扬声器：iPhone 上显示的名称和播放 URL 的状态。ioBroker.assistant 卫星、ioBroker.satellite-display 面板和 Dune HD 会自动填写停止、音量、标题和流；填写字段可覆盖，填 - 表示不使用。",
     "Active": "启用",
     "AirPlay name": "AirPlay 名称",
     "Play URL state": "播放 URL 的状态",

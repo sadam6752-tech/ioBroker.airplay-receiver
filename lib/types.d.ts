@@ -31,7 +31,7 @@ export interface ReceiverConfig {
     /** AirPlay name shown on the iPhone */
     name: string;
     /** Which preset filled the empty fields */
-    kind: 'assistant' | 'dune' | 'custom';
+    kind: 'assistant' | 'satellite-display' | 'dune' | 'custom';
     /** State that takes the stream URL */
     urlState: string;
     /** State written to stop the target */

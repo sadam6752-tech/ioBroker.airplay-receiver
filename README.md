@@ -17,6 +17,8 @@ list; the music sent there plays on any ioBroker player that takes a URL:
 
 - the voice satellites of [ioBroker.assistant](https://github.com/ioBroker/ioBroker.assistant), for example a
   [Waveshare ESP32-S3-AUDIO board](https://www.waveshare.com/wiki/ESP32-S3-AUDIO-Board) running ESPHome,
+- the tile panels of ioBroker.satellite-display, for example a Waveshare ESP32-S3-Touch-LCD-2 with a MAX98357A
+  amplifier,
 - a [Dune HD](https://dune-hd.com/) media player through ioBroker.dune-hd-remote,
 - any other adapter with a state that plays a URL (role `media.url`).
 
@@ -40,8 +42,8 @@ iPhone ──AirPlay 1 (RTSP/RTP, ALAC)──▶ adapter ──▶ ffmpeg ──
 ## Requirements
 
 - A player adapter with a state that plays a URL, e.g. ioBroker.assistant 1.4.10 or newer
-  (`assistant.0.satellites.<satellite>.controls.<player>.url`) or ioBroker.dune-hd-remote
-  (`dune-hd-remote.0.media.playUrl`).
+  (`assistant.0.satellites.<satellite>.controls.<player>.url`), ioBroker.satellite-display
+  (`satellite-display.0.satellites.<panel>.media.url`) or ioBroker.dune-hd-remote (`dune-hd-remote.0.media.playUrl`).
 - The iPhone and the ioBroker host in the same network (mDNS does not cross routers).
 - The player must reach the HTTP port of the adapter (default 8095).
 
@@ -66,6 +68,7 @@ that the play URL state selects. Type a value to override the preset, or `-` for
 | Preset (play URL state)                              | Stream              | Stop                          | Volume                             | Title                             |
 | ---------------------------------------------------- | ------------------- | ----------------------------- | ---------------------------------- | --------------------------------- |
 | `assistant.0.satellites.<sat>.controls.<player>.url` | FLAC 48 kHz mono    | `stop` into the URL state     | `controls.<player>.volume` (0 … 1) | `controls.media_title` (48 bytes) |
+| `satellite-display.0.satellites.<panel>.media.url`   | FLAC 48 kHz mono    | `media.stop` = `true`         | `media.volume` (0 … 100)           | `media.title` (48 bytes)          |
 | `dune-hd-remote.0.media.playUrl`                     | MP3 44.1 kHz stereo | `control.stop` = `true`       | `control.volume` (0 … 100)         | none                              |
 | any other state                                      | MP3 44.1 kHz stereo | empty text into the URL state | none                               | none                              |
 
@@ -159,6 +162,13 @@ not affiliated with Apple.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Preset for the tile panels of ioBroker.satellite-display: the `media.url` state fills stop,
+  volume (0 … 100 %), title (48 bytes) and a FLAC 48 kHz mono stream by itself
+- (sadam6752-tech) The stream is sent without chunked encoding, like an internet radio: an ESPHome player (ESP-IDF
+  HTTP client) hung when it stopped the endless chunked stream; starting and switching are faster now
 
 ### 0.1.1 (2026-11-06)
 
