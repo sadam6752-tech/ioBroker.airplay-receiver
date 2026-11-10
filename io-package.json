@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "news": {
+            "0.1.2": {
+                "en": "Preset for the tile panels of ioBroker.satellite-display (stop, volume, title, FLAC); the stream is sent without chunked encoding, so ESPHome players no longer hang on stop",
+                "de": "Voreinstellung für die Kachel-Panels von ioBroker.satellite-display (Stopp, Lautstärke, Titel, FLAC); der Stream wird ohne Chunked-Kodierung gesendet, ESPHome-Player hängen beim Stoppen nicht mehr",
+                "ru": "Пресет для панелей плиток ioBroker.satellite-display (стоп, громкость, название, FLAC); поток отдаётся без chunked-кодирования, плееры ESPHome больше не зависают при остановке",
+                "pt": "Predefinição para os painéis de blocos do ioBroker.satellite-display (parar, volume, título, FLAC); o stream é enviado sem codificação chunked, os leitores ESPHome já não bloqueiam ao parar",
+                "nl": "Voorinstelling voor de tegelpanelen van ioBroker.satellite-display (stop, volume, titel, FLAC); de stream wordt zonder chunked-codering verzonden, ESPHome-spelers blijven niet meer hangen bij stoppen",
+                "fr": "Préréglage pour les panneaux de tuiles de ioBroker.satellite-display (arrêt, volume, titre, FLAC) ; le flux est envoyé sans codage chunked, les lecteurs ESPHome ne se bloquent plus à l'arrêt",
+                "it": "Preimpostazione per i pannelli di riquadri di ioBroker.satellite-display (stop, volume, titolo, FLAC); lo stream viene inviato senza codifica chunked, i lettori ESPHome non si bloccano più allo stop",
+                "es": "Ajuste predefinido para los paneles de mosaicos de ioBroker.satellite-display (parar, volumen, título, FLAC); el stream se envía sin codificación chunked, los reproductores ESPHome ya no se bloquean al parar",
+                "pl": "Ustawienie wstępne dla paneli kafelków ioBroker.satellite-display (stop, głośność, tytuł, FLAC); strumień jest wysyłany bez kodowania chunked, odtwarzacze ESPHome nie zawieszają się już przy zatrzymaniu",
+                "uk": "Пресет для панелей плиток ioBroker.satellite-display (стоп, гучність, назва, FLAC); потік надсилається без chunked-кодування, програвачі ESPHome більше не зависають при зупинці",
+                "zh-cn": "为 ioBroker.satellite-display 的磁贴面板提供预设（停止、音量、标题、FLAC）；音频流不再使用分块编码发送，ESPHome 播放器停止时不再卡住"
+            },
             "0.1.1": {
                 "en": "Fixed ports are declared in the used resources registry of js-controller 8",
                 "de": "Feste Ports werden in der Registry der belegten Ressourcen von js-controller 8 eingetragen",

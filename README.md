@@ -163,7 +163,7 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.1.2 (2026-11-10)
 
 - (sadam6752-tech) Preset for the tile panels of ioBroker.satellite-display: the `media.url` state fills stop,
   volume (0 … 100 %), title (48 bytes) and a FLAC 48 kHz mono stream by itself
@@ -190,13 +190,6 @@ not affiliated with Apple.
 ### 0.0.2 (2026-11-05)
 
 - (sadam6752-tech) Release through the GitHub workflow with npm provenance; stricter types in the code
-
-### 0.0.1 (2026-11-05)
-
-- (sadam6752-tech) First version: every voice satellite of ioBroker.assistant becomes an AirPlay speaker for iPhone,
-  iPad and Mac
-
-Older changes are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 
