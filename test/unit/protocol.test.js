@@ -177,6 +177,26 @@ describe('Playout', () => {
         assert.deepEqual(active, [true, false, true]);
     });
 
+    it('adds no silence right after the process stood still: the waiting packets come first', () => {
+        const { p, out, advance } = setup();
+        p.push(1, Buffer.from('a'));
+        p.tick();
+        advance(20);
+        p.tick();
+        // the event loop was blocked for half a second: the next tick comes late, packets wait in the socket
+        advance(500);
+        p.tick();
+        assert.deepEqual(out, ['a'], 'silence before the waiting packet');
+        p.push(2, Buffer.from('b'));
+        assert.deepEqual(out, ['a', 'b']);
+        // a real pause, ticks on time again: silence as before
+        for (let i = 0; i < 10; i++) {
+            advance(40);
+            p.tick();
+        }
+        assert.ok(out.filter(f => f === '-').length >= 20, String(out.length));
+    });
+
     it('compares sequence numbers across the wrap', () => {
         assert.equal(seqDiff(2, 65534), 4);
         assert.equal(seqDiff(65534, 2), -4);

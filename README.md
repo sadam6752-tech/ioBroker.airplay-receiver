@@ -163,6 +163,11 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) No gap of silence in the music after the process stood still for a moment (e.g. a slow start of
+  ffmpeg): the packets that wait in the socket come first; this also made a test fail now and then
+
 ### 0.1.2 (2026-11-10)
 
 - (sadam6752-tech) Preset for the tile panels of ioBroker.satellite-display: the `media.url` state fills stop,
