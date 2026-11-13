@@ -166,13 +166,14 @@ class AirplayReceiver extends utils.Adapter {
 
         await this.createObjects(receivers);
 
-        this.http = new StreamServer(this.log);
+        const http = new StreamServer(this.log);
+        this.http = http;
         await this.checkPort(Number(this.config.port) || 8095, String(this.config.bind || ''), 'HTTP');
+        if (this.http !== http) {
+            return; // stopped while it was starting
+        }
         try {
-            this.httpPort = await this.http.listen(
-                Number(this.config.port) || 8095,
-                String(this.config.bind || '0.0.0.0'),
-            );
+            this.httpPort = await http.listen(Number(this.config.port) || 8095, String(this.config.bind || '0.0.0.0'));
         } catch (e) {
             this.log.error(`Cannot open the HTTP port ${this.config.port}: ${e.message}`);
             return;
@@ -180,6 +181,9 @@ class AirplayReceiver extends utils.Adapter {
         this.announcer = new Announcer(e => this.log.warn(`mDNS: ${e.message}`));
 
         for (const cfg of receivers) {
+            if (this.http !== http) {
+                return; // stopped while it was starting
+            }
             try {
                 await this.startReceiver(cfg, ffmpegPath);
             } catch (e) {
@@ -254,7 +258,8 @@ class AirplayReceiver extends utils.Adapter {
     async createObjects(receivers) {
         await this.extendObject('receivers', { type: 'folder', common: { name: NAMES.receivers }, native: {} });
         const states = [
-            ['connected', 'boolean', 'indicator.connected', false],
+            // indicator.connected belongs to info.connection of an instance only
+            ['connected', 'boolean', 'indicator', false],
             ['playing', 'boolean', 'indicator', false],
             ['client', 'string', 'text', ''],
             ['title', 'string', 'media.title', ''],
@@ -527,7 +532,7 @@ class AirplayReceiver extends utils.Adapter {
         }
         const answer = result => obj.callback && this.sendTo(obj.from, obj.command, result, obj.callback);
         try {
-            if (obj.command === 'listUrlStates' || obj.command === 'listPlayers') {
+            if (obj.command === 'listUrlStates') {
                 // every writable state with role media.url: assistant players, Dune HD, others
                 const objs = await this.getForeignObjectsAsync('*', 'state');
                 answer(urlStateChoices(objs, this.namespace));

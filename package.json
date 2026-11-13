@@ -1,6 +1,6 @@
 {
   "name": "iobroker.airplay-receiver",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "AirPlay speakers for ioBroker players: an iPhone or Mac streams music to ioBroker.assistant satellites, Dune HD or any player that takes a URL",
   "author": {
     "name": "sadam6752-tech",

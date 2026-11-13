@@ -163,10 +163,13 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.1.3 (2026-11-13)
 
 - (sadam6752-tech) No gap of silence in the music after the process stood still for a moment (e.g. a slow start of
   ffmpeg): the packets that wait in the socket come first; this also made a test fail now and then
+- (sadam6752-tech) The state `connected` of a speaker has the role `indicator` (`indicator.connected` is meant for the
+  instance only); the stream choice _Auto_ is translated; the message command `listPlayers` of 0.0.x is removed
+- (sadam6752-tech) A stop while the adapter is still starting no longer logs "Cannot open the HTTP port"
 
 ### 0.1.2 (2026-11-10)
 
@@ -191,10 +194,6 @@ not affiliated with Apple.
 
 - (sadam6752-tech) The display shows "AirPlay – <sender>" right away instead of the radio station that played
   before, and the track title is written again once the satellite has opened the stream
-
-### 0.0.2 (2026-11-05)
-
-- (sadam6752-tech) Release through the GitHub workflow with npm provenance; stricter types in the code
 
 ## License
 

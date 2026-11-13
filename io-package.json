@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.1.2",
+        "version": "0.1.3",
         "news": {
+            "0.1.3": {
+                "en": "No gap of silence in the music after the process stood still for a moment; the state connected of a speaker has the role indicator; the stream choice Auto is translated; a stop during the start no longer logs an error",
+                "de": "Keine Lücke aus Stille in der Musik mehr, nachdem der Prozess kurz stillstand; der State connected eines Lautsprechers hat die Rolle indicator; die Stream-Auswahl Auto ist übersetzt; ein Stopp während des Starts schreibt keinen Fehler mehr ins Log",
+                "ru": "Нет больше паузы из тишины в музыке после короткой остановки процесса; состояние connected колонки получило роль indicator; выбор потока «Авто» переведён; остановка во время запуска больше не пишет ошибку в лог",
+                "pt": "Já não há uma falha de silêncio na música depois de o processo parar por um momento; o estado connected de um altifalante tem a função indicator; a escolha de stream Automático está traduzida; uma paragem durante o arranque já não regista um erro",
+                "nl": "Geen gat van stilte meer in de muziek nadat het proces even stilstond; de state connected van een luidspreker heeft de rol indicator; de streamkeuze Automatisch is vertaald; een stop tijdens het starten logt geen fout meer",
+                "fr": "Plus de trou de silence dans la musique après un bref arrêt du processus ; l'état connected d'une enceinte a le rôle indicator ; le choix de flux Automatique est traduit ; un arrêt pendant le démarrage n'écrit plus d'erreur dans le journal",
+                "it": "Nessun buco di silenzio nella musica dopo che il processo si è fermato per un momento; lo stato connected di un altoparlante ha il ruolo indicator; la scelta dello stream Automatico è tradotta; uno stop durante l'avvio non registra più un errore",
+                "es": "Ya no hay un hueco de silencio en la música después de que el proceso se detuviera un momento; el estado connected de un altavoz tiene el rol indicator; la opción de stream Automático está traducida; una parada durante el arranque ya no registra un error",
+                "pl": "Brak przerwy ciszy w muzyce po krótkim zatrzymaniu procesu; stan connected głośnika ma rolę indicator; wybór strumienia Automatycznie jest przetłumaczony; zatrzymanie podczas uruchamiania nie zapisuje już błędu w logu",
+                "uk": "Більше немає паузи з тиші в музиці після короткої зупинки процесу; стан connected колонки отримав роль indicator; вибір потоку «Авто» перекладено; зупинка під час запуску більше не пише помилку в лог",
+                "zh-cn": "进程短暂停顿后，音乐中不再出现静音间隙；扬声器的 connected 状态改用 indicator 角色；流选项“自动”已翻译；启动期间停止不再在日志中记录错误"
+            },
             "0.1.2": {
                 "en": "Preset for the tile panels of ioBroker.satellite-display (stop, volume, title, FLAC); the stream is sent without chunked encoding, so ESPHome players no longer hang on stop",
                 "de": "Voreinstellung für die Kachel-Panels von ioBroker.satellite-display (Stopp, Lautstärke, Titel, FLAC); der Stream wird ohne Chunked-Kodierung gesendet, ESPHome-Player hängen beim Stoppen nicht mehr",

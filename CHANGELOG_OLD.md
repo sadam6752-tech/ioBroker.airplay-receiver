@@ -2,6 +2,10 @@
 
 The README keeps the changelog of the last five versions; older entries move here.
 
+### 0.0.2 (2026-11-05)
+
+- (sadam6752-tech) Release through the GitHub workflow with npm provenance; stricter types in the code
+
 ### 0.0.1 (2026-11-05)
 
 - (sadam6752-tech) First version: every voice satellite of ioBroker.assistant becomes an AirPlay speaker for iPhone,

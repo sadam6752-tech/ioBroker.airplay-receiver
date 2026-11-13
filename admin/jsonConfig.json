@@ -56,7 +56,19 @@
                             "noTranslation": true,
                             "options": [
                                 {
-                                    "label": "Auto",
+                                    "label": {
+                                        "en": "Auto",
+                                        "de": "Automatisch",
+                                        "ru": "Авто",
+                                        "pt": "Automático",
+                                        "nl": "Automatisch",
+                                        "fr": "Automatique",
+                                        "it": "Automatico",
+                                        "es": "Automático",
+                                        "pl": "Automatycznie",
+                                        "uk": "Авто",
+                                        "zh-cn": "自动"
+                                    },
                                     "value": "auto"
                                 },
                                 {
