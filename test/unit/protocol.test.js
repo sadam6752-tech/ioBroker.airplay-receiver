@@ -15,6 +15,7 @@ const {
     migrateRows,
     playersFromIds,
     urlStateChoices,
+    customIds,
     volumeLevel,
     scaleVolume,
     parseStopValue,
@@ -316,6 +317,20 @@ describe('Settings', () => {
                 { label: 'dune-hd-remote.0.media.playUrl (Play)', value: 'dune-hd-remote.0.media.playUrl' },
             ],
         );
+    });
+
+    it('finds the states that other adapters are linked to', () => {
+        const ch = 'airplay-receiver.0.receivers.old';
+        assert.deepEqual(
+            customIds({
+                [`${ch}.volume`]: { type: 'state', common: { custom: { 'history.0': { enabled: true } } } },
+                [`${ch}.title`]: { type: 'state', common: { custom: {} } },
+                [`${ch}.playing`]: { type: 'state', common: {} },
+                [`${ch}.artist`]: { type: 'state', common: { custom: null } },
+            }),
+            [`${ch}.volume`],
+        );
+        assert.deepEqual(customIds(undefined), []);
     });
 
     it('scales the volume to the range of the target', () => {

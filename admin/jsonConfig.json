@@ -15,6 +15,16 @@
                     "lg": 12,
                     "xl": 12
                 },
+                "_deleteHint": {
+                    "type": "staticText",
+                    "text": "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
                 "receivers": {
                     "type": "table",
                     "newLine": true,

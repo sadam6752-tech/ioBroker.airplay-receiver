@@ -18,6 +18,7 @@ const {
     migrateRows,
     playersFromIds,
     urlStateChoices,
+    customIds,
     volumeLevel,
     scaleVolume,
     displayTitle,
@@ -298,9 +299,18 @@ class AirplayReceiver extends utils.Adapter {
             endkey: `${this.namespace}.receivers.香`,
         });
         for (const row of channels?.rows || []) {
-            if (!keep.has(row.id)) {
-                await this.delForeignObjectAsync(row.id, { recursive: true });
+            if (keep.has(row.id)) {
+                continue;
             }
+            // states with History, InfluxDB, SQL … settings are kept, their settings would be lost
+            const linked = customIds(await this.getForeignObjectsAsync(`${row.id}.*`));
+            if (linked.length) {
+                this.log.warn(
+                    `${row.id} is no longer configured but kept: ${linked.join(', ')} ${linked.length === 1 ? 'has' : 'have'} custom settings (History, InfluxDB, SQL …); remove them and restart the adapter to delete it`,
+                );
+                continue;
+            }
+            await this.delForeignObjectAsync(row.id, { recursive: true });
         }
     }
 

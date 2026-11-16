@@ -25,5 +25,6 @@
     "Path of ffmpeg": "Ścieżka ffmpeg",
     "Empty: the bundled ffmpeg": "Puste: dołączony ffmpeg",
     "ms": "ms",
-    "s": "s"
+    "s": "s",
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Usunięcie wiersza usuwa obiekty tego głośnika. Stany z ustawieniami History, InfluxDB, SQL lub innymi własnymi ustawieniami zachowują obiekty głośnika; log je wymienia."
 }

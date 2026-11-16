@@ -79,6 +79,10 @@ Without any row, _one speaker for every satellite with a media player_ creates a
 ioBroker.assistant, named after the satellite. Rows of version 0.0.x (a satellite player instead of a play URL state)
 are converted once at the start.
 
+Removing a row deletes the objects of that speaker (`airplay-receiver.0.receivers.<name>`) at the next start. When one
+of its states has History, InfluxDB, SQL or other custom settings, the objects are kept and the log names those states;
+remove the settings and restart the adapter to delete them.
+
 ### Settings
 
 | Setting                                     | Default       | Meaning                                                                         |
@@ -163,6 +167,12 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.4 (2026-11-16)
+
+- (sadam6752-tech) The objects of a removed speaker are kept when one of its states has History, InfluxDB, SQL or
+  other custom settings; the log names them, and the settings say so
+- (sadam6752-tech) The README links the older changes in CHANGELOG_OLD.md
+
 ### 0.1.3 (2026-11-13)
 
 - (sadam6752-tech) No gap of silence in the music after the process stood still for a moment (e.g. a slow start of
@@ -190,10 +200,7 @@ not affiliated with Apple.
 - (sadam6752-tech) MP3 streams work (ffmpeg refused the sample format), sent like an internet radio without ID3 tag
 - (sadam6752-tech) A pause keeps the stream open with silence, by default for 60 s, before the player is stopped
 
-### 0.0.3 (2026-11-05)
-
-- (sadam6752-tech) The display shows "AirPlay – <sender>" right away instead of the radio station that played
-  before, and the track title is written again once the satellite has opened the stream
+Older changes: [CHANGELOG_OLD.md](CHANGELOG_OLD.md)
 
 ## License
 

@@ -2,6 +2,11 @@
 
 The README keeps the changelog of the last five versions; older entries move here.
 
+### 0.0.3 (2026-11-05)
+
+- (sadam6752-tech) The display shows "AirPlay – <sender>" right away instead of the radio station that played
+  before, and the track title is written again once the satellite has opened the stream
+
 ### 0.0.2 (2026-11-05)
 
 - (sadam6752-tech) Release through the GitHub workflow with npm provenance; stricter types in the code

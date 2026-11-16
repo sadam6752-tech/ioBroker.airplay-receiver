@@ -25,5 +25,6 @@
     "Path of ffmpeg": "Percorso di ffmpeg",
     "Empty: the bundled ffmpeg": "Vuoto: il ffmpeg incluso",
     "ms": "ms",
-    "s": "s"
+    "s": "s",
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Rimuovere una riga elimina gli oggetti di quell'altoparlante. Gli stati con impostazioni History, InfluxDB, SQL o altre impostazioni personalizzate mantengono gli oggetti dell'altoparlante; il log li elenca."
 }

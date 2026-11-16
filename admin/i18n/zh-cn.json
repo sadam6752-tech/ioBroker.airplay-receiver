@@ -25,5 +25,6 @@
     "Path of ffmpeg": "ffmpeg 路径",
     "Empty: the bundled ffmpeg": "留空：使用自带的 ffmpeg",
     "ms": "毫秒",
-    "s": "秒"
+    "s": "秒",
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "删除一行会删除该扬声器的对象。如果状态带有 History、InfluxDB、SQL 或其他自定义设置，则保留该扬声器的对象；日志会列出它们。"
 }
