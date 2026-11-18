@@ -9,7 +9,7 @@
 const utils = require('@iobroker/adapter-core');
 const { RaopReceiver } = require('./lib/receiver');
 const { Channel, StreamServer } = require('./lib/streamer');
-const { Announcer } = require('./lib/mdns');
+const { Announcer, ErrorDigest } = require('./lib/mdns');
 const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
 const { usedTcpPorts, bindOf } = require('./lib/resources');
@@ -68,6 +68,8 @@ class AirplayReceiver extends utils.Adapter {
         this.http = null;
         /** @type {Announcer | null} */
         this.announcer = null;
+        /** @type {ErrorDigest | null} one warning per network outage instead of one per mDNS packet */
+        this.mdnsErrors = null;
         this.httpPort = 0;
         this.on('ready', this.onReady.bind(this));
         this.on('message', this.onMessage.bind(this));
@@ -179,7 +181,14 @@ class AirplayReceiver extends utils.Adapter {
             this.log.error(`Cannot open the HTTP port ${this.config.port}: ${e.message}`);
             return;
         }
-        this.announcer = new Announcer(e => this.log.warn(`mDNS: ${e.message}`));
+        const mdnsErrors = new ErrorDigest({
+            warn: text => this.log.warn(text),
+            info: text => this.log.info(text),
+            setTimeout: (fn, ms) => this.timers.setTimeout(fn, ms),
+            clearTimeout: timer => this.timers.clearTimeout(timer),
+        });
+        this.mdnsErrors = mdnsErrors;
+        this.announcer = new Announcer(e => mdnsErrors.report(`mDNS: ${e.message}`));
 
         for (const cfg of receivers) {
             if (this.http !== http) {
@@ -418,7 +427,9 @@ class AirplayReceiver extends utils.Adapter {
 
         await this.checkPort(cfg.rtspPort, '', `${cfg.name}: RTSP`);
         const port = await raop.start();
-        this.announcer?.publish(mac, cfg.name, port, e => this.log.warn(`${cfg.name}: mDNS: ${e.message}`));
+        this.announcer?.publish(mac, cfg.name, port, e =>
+            this.mdnsErrors ? this.mdnsErrors.report(`${cfg.name}: mDNS: ${e.message}`) : this.log.warn(e.message),
+        );
         set('streamUrl', this.streamUrl(r));
         this.log.info(
             `AirPlay speaker "${cfg.name}" on port ${port} → ${cfg.urlState} ` +
@@ -565,6 +576,8 @@ class AirplayReceiver extends utils.Adapter {
                 await r.raop.stop();
             }
             this.running = [];
+            this.mdnsErrors?.stop();
+            this.mdnsErrors = null;
             await this.announcer?.close();
             this.announcer = null;
             await this.http?.close();

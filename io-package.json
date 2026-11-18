@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.1.4",
+        "version": "0.1.5",
         "news": {
+            "0.1.5": {
+                "en": "A network outage writes one mDNS warning instead of one per packet; the repeats are counted, and one info line says when mDNS works again",
+                "de": "Ein Netzwerkausfall schreibt eine mDNS-Warnung statt einer pro Paket; die Wiederholungen werden gezählt, und eine Info-Zeile meldet, wann mDNS wieder funktioniert",
+                "ru": "При обрыве сети пишется одно предупреждение mDNS вместо одного на каждый пакет; повторы считаются, а одна строка info сообщает, когда mDNS снова работает",
+                "pt": "Uma falha de rede escreve um aviso mDNS em vez de um por pacote; as repetições são contadas e uma linha info indica quando o mDNS volta a funcionar",
+                "nl": "Een netwerkstoring schrijft één mDNS-waarschuwing in plaats van één per pakket; herhalingen worden geteld en één info-regel meldt wanneer mDNS weer werkt",
+                "fr": "Une panne réseau écrit un seul avertissement mDNS au lieu d'un par paquet ; les répétitions sont comptées et une ligne info indique quand mDNS fonctionne à nouveau",
+                "it": "Un'interruzione di rete scrive un solo avviso mDNS invece di uno per pacchetto; le ripetizioni vengono contate e una riga info indica quando mDNS funziona di nuovo",
+                "es": "Un corte de red escribe un solo aviso mDNS en lugar de uno por paquete; las repeticiones se cuentan y una línea info indica cuándo mDNS vuelve a funcionar",
+                "pl": "Awaria sieci zapisuje jedno ostrzeżenie mDNS zamiast jednego na pakiet; powtórzenia są liczone, a jedna linia info informuje, kiedy mDNS znów działa",
+                "uk": "При обриві мережі пишеться одне попередження mDNS замість одного на кожен пакет; повтори рахуються, а один рядок info повідомляє, коли mDNS знову працює",
+                "zh-cn": "网络中断时只写一条 mDNS 警告，而不是每个数据包一条；重复错误会被计数，mDNS 恢复后写一条 info 日志"
+            },
             "0.1.4": {
                 "en": "The objects of a removed speaker are kept when one of its states has History, InfluxDB, SQL or other custom settings; the log names them and the settings say so",
                 "de": "Die Objekte eines entfernten Lautsprechers bleiben erhalten, wenn einer seiner States History-, InfluxDB-, SQL- oder andere eigene Einstellungen hat; das Log nennt sie, und die Einstellungen weisen darauf hin",
@@ -80,19 +93,6 @@
                 "pl": "Wyświetlacz od razu pokazuje „AirPlay – <nadawca>” zamiast wcześniej grającej stacji radiowej, a tytuł jest zapisywany ponownie, gdy satelita otworzy strumień",
                 "uk": "Дисплей одразу показує «AirPlay – <відправник>» замість радіостанції, що грала раніше, а назва треку записується повторно, коли сателіт відкрив потік",
                 "zh-cn": "显示屏立即显示“AirPlay – <发送端>”，不再停留在之前播放的电台，卫星打开流后会再次写入曲目标题"
-            },
-            "0.0.2": {
-                "en": "Release through the GitHub workflow with npm provenance; stricter types in the code",
-                "de": "Veröffentlichung über den GitHub-Workflow mit npm-Provenance; strengere Typen im Code",
-                "ru": "Публикация через GitHub-workflow с npm provenance; более строгие типы в коде",
-                "pt": "Publicação pelo workflow do GitHub com proveniência npm; tipos mais rigorosos no código",
-                "nl": "Publicatie via de GitHub-workflow met npm-provenance; strengere typen in de code",
-                "fr": "Publication par le workflow GitHub avec provenance npm ; types plus stricts dans le code",
-                "it": "Pubblicazione tramite il workflow GitHub con provenienza npm; tipi più rigorosi nel codice",
-                "es": "Publicación mediante el workflow de GitHub con procedencia npm; tipos más estrictos en el código",
-                "pl": "Publikacja przez workflow GitHub z pochodzeniem npm; ściślejsze typy w kodzie",
-                "uk": "Публікація через GitHub-workflow з npm provenance; суворіші типи в коді",
-                "zh-cn": "通过 GitHub 工作流发布并附带 npm 来源证明；代码中使用更严格的类型"
             }
         },
         "titleLang": {

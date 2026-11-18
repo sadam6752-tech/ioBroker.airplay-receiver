@@ -167,6 +167,11 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
+### 0.1.5 (2026-11-18)
+
+- (sadam6752-tech) A network outage writes one mDNS warning instead of one per packet (25 in 18 s when the router
+  restarted); the repeats are counted, and one info line says when mDNS works again
+
 ### 0.1.4 (2026-11-16)
 
 - (sadam6752-tech) The objects of a removed speaker are kept when one of its states has History, InfluxDB, SQL or
@@ -191,14 +196,6 @@ not affiliated with Apple.
 ### 0.1.1 (2026-11-06)
 
 - (sadam6752-tech) Fixed ports are declared in the used resources registry of js-controller 8
-
-### 0.1.0 (2026-11-06)
-
-- (sadam6752-tech) Any player that takes a URL: a row names the play URL state; presets fill stop, volume, title and
-  stream for ioBroker.assistant satellites and Dune HD; rows of 0.0.x are converted once
-- (sadam6752-tech) The admin offers every writable state with role media.url
-- (sadam6752-tech) MP3 streams work (ffmpeg refused the sample format), sent like an internet radio without ID3 tag
-- (sadam6752-tech) A pause keeps the stream open with silence, by default for 60 s, before the player is stopped
 
 Older changes: [CHANGELOG_OLD.md](CHANGELOG_OLD.md)
 
