@@ -53,7 +53,21 @@ tests.integration(path.join(__dirname, '..'), {
 
             after(async function () {
                 this.timeout(30_000);
-                await harness?.stopAdapter();
+                if (!harness) {
+                    return;
+                }
+                const stopped = harness.stopAdapter();
+                // js-controller 8 (dev builds from 2026-11-22) obeys sigKill only from the controller of its own host,
+                // @iobroker/testing 6.3.2 sends it from system.host.testing: send it once more from the instance's host
+                const host = (await harness.objects.getObjectAsync('system.adapter.airplay-receiver.0'))?.common?.host;
+                if (host && harness.isAdapterRunning()) {
+                    await harness.states.setStateAsync('system.adapter.airplay-receiver.0.sigKill', {
+                        val: -1,
+                        ack: false,
+                        from: `system.host.${host}`,
+                    });
+                }
+                await stopped;
             });
 
             const state = async id => (await harness.states.getStateAsync(id))?.val;
