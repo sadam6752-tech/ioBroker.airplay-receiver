@@ -166,6 +166,9 @@
             }
         ],
         "messagebox": true,
+        "supportedMessages": {
+            "help": true
+        },
         "declareUsedResources": true
     },
     "native": {

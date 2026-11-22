@@ -134,6 +134,17 @@ For every speaker below `airplay-receiver.0.receivers.<name>`:
 
 `info.connection` is true while the speakers are announced.
 
+## Help for AI agents and scripts
+
+The adapter declares `common.supportedMessages.help` and answers the message `help` with a description of itself and
+its states (`{ help, commands }`, js-controller 8). AI agents such as ioBroker.pi-agent read it to answer "what plays
+on AirPlay?" or "where does the iPhone sound go?". There are no commands that change something: playback is started
+and stopped on the iPhone, speakers are set up in the settings.
+
+```js
+sendTo('airplay-receiver.0', 'help', {}, answer => log(answer.help));
+```
+
 ## Used ports
 
 With js-controller 8 the adapter declares its fixed ports in the used resources registry of the host
@@ -166,6 +177,11 @@ not affiliated with Apple.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (sadam6752-tech) Answers the message `help` (`common.supportedMessages.help`): AI agents such as ioBroker.pi-agent
+  learn what the adapter does and which states tell what plays
 
 ### 0.1.5 (2026-11-18)
 

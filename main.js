@@ -12,6 +12,7 @@ const { Channel, StreamServer } = require('./lib/streamer');
 const { Announcer, ErrorDigest } = require('./lib/mdns');
 const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
+const { helpAnswer } = require('./lib/help');
 const { usedTcpPorts, bindOf } = require('./lib/resources');
 const {
     normalizeReceivers,
@@ -553,7 +554,10 @@ class AirplayReceiver extends utils.Adapter {
         }
         const answer = result => obj.callback && this.sendTo(obj.from, obj.command, result, obj.callback);
         try {
-            if (obj.command === 'listUrlStates') {
+            if (obj.command === 'help') {
+                // what the adapter is and which states an AI agent reads (lib/help.js)
+                answer(helpAnswer());
+            } else if (obj.command === 'listUrlStates') {
                 // every writable state with role media.url: assistant players, Dune HD, others
                 const objs = await this.getForeignObjectsAsync('*', 'state');
                 answer(urlStateChoices(objs, this.namespace));

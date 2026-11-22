@@ -84,6 +84,20 @@ tests.integration(path.join(__dirname, '..'), {
                 });
             });
 
+            it('answers "help" through js-controller (supportedMessages keeps the message box on)', async function () {
+                this.timeout(15_000);
+                const answer = await new Promise((resolve, reject) => {
+                    const timer = setTimeout(() => reject(new Error('no answer to "help"')), 10_000);
+                    harness.sendTo('airplay-receiver.0', 'help', {}, resp => {
+                        clearTimeout(timer);
+                        resolve(resp);
+                    });
+                });
+                assert.equal(typeof answer?.help, 'string');
+                assert.match(answer.help, /AirPlay/);
+                assert.deepEqual(answer.commands, [{ command: 'help', write: false }]);
+            });
+
             it('plays a stream on the satellite, with volume and title, and stops it', async function () {
                 this.timeout(60_000);
                 const sender = new RaopSender({ port: RTSP_PORT, drop: seq => seq % 50 === 7 });
