@@ -2,6 +2,10 @@
 
 The README keeps the changelog of the last five versions; older entries move here.
 
+### 0.1.1 (2026-11-06)
+
+- (sadam6752-tech) Fixed ports are declared in the used resources registry of js-controller 8
+
 ### 0.1.0 (2026-11-06)
 
 - (sadam6752-tech) Any player that takes a URL: a row names the play URL state; presets fill stop, volume, title and

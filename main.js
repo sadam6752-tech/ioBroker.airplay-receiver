@@ -13,6 +13,7 @@ const { Announcer, ErrorDigest } = require('./lib/mdns');
 const { macFor } = require('./lib/raop-crypto');
 const { NAMES } = require('./lib/names');
 const { helpAnswer } = require('./lib/help');
+const { AirplayDeviceManagement } = require('./lib/device-management');
 const { usedTcpPorts, bindOf } = require('./lib/resources');
 const {
     normalizeReceivers,
@@ -20,6 +21,8 @@ const {
     playersFromIds,
     urlStateChoices,
     customIds,
+    satelliteDeviceOf,
+    groupPlayers,
     volumeLevel,
     scaleVolume,
     displayTitle,
@@ -72,6 +75,10 @@ class AirplayReceiver extends utils.Adapter {
         /** @type {ErrorDigest | null} one warning per network outage instead of one per mDNS packet */
         this.mdnsErrors = null;
         this.httpPort = 0;
+        /** @type {Set<string>} states of players that do not exist, warned once until they are back */
+        this.missingIds = new Set();
+        // the speakers in the tab Devices (dm:* messages)
+        this.deviceManagement = new AirplayDeviceManagement(this);
         this.on('ready', this.onReady.bind(this));
         this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
@@ -436,6 +443,143 @@ class AirplayReceiver extends utils.Adapter {
             `AirPlay speaker "${cfg.name}" on port ${port} → ${cfg.urlState} ` +
                 `(${cfg.codec.toUpperCase()} ${cfg.sampleRate} Hz ${cfg.channels === 2 ? 'stereo' : 'mono'})`,
         );
+        for (const id of await this.missingTargets(cfg)) {
+            this.warnMissing(id);
+        }
+    }
+
+    /**
+     * The states of the player of a speaker that do not exist (e.g. its satellite was deleted in ioBroker.assistant).
+     *
+     * @param {ReceiverConfig} cfg - Receiver
+     * @returns {Promise<string[]>} Ids of the missing states
+     */
+    async missingTargets(cfg) {
+        const ids = [...new Set([cfg.urlState, cfg.stopState, cfg.volumeState, cfg.titleState].filter(Boolean))];
+        const missing = [];
+        for (const id of ids) {
+            if (!(await this.targetExists(id))) {
+                missing.push(id);
+            }
+        }
+        return missing;
+    }
+
+    /**
+     * @param {string} id - State of a player
+     * @returns {Promise<boolean>} Its object exists (an error while reading counts as existing)
+     */
+    async targetExists(id) {
+        try {
+            return !!(await this.getForeignObjectAsync(id));
+        } catch {
+            return true;
+        }
+    }
+
+    /**
+     * One warning per missing state of a player instead of one per write.
+     *
+     * @param {string} id - State of a player
+     */
+    warnMissing(id) {
+        if (this.missingIds.has(id)) {
+            return;
+        }
+        this.missingIds.add(id);
+        this.log.warn(
+            `${id} does not exist (deleted or renamed in its adapter?): nothing is written there until it is back; check the speaker table`,
+        );
+    }
+
+    /** @returns {import('./lib/device-management').SpeakerInfo[]} The running speakers for the tab Devices */
+    speakers() {
+        return this.running.map(r => ({
+            cfg: r.cfg,
+            port: r.raop.port || 0,
+            client: r.raop.session?.client || '',
+            format: r.raop.session?.format || null,
+            streamUrl: this.streamUrl(r),
+        }));
+    }
+
+    /** @returns {boolean} The speakers are announced with mDNS */
+    announced() {
+        return !!this.announcer && this.running.length > 0;
+    }
+
+    /**
+     * Ends the AirPlay session of a speaker (tab Devices): the sender is disconnected, the player stopped.
+     *
+     * @param {string} id - Id of the speaker
+     * @returns {string | null} Name of the sender, null when none was connected
+     */
+    endSession(id) {
+        const r = this.running.find(x => x.cfg.id === id);
+        const session = r?.raop.session;
+        if (!r || !session) {
+            return null;
+        }
+        r.raop.endSession('ended in the admin');
+        return session.client || '?';
+    }
+
+    /**
+     * The players of ioBroker.assistant and ioBroker.satellite-display that no speaker uses (tab Devices, "Find
+     * players"), one device (same address) together.
+     *
+     * @returns {Promise<ReturnType<typeof groupPlayers>>} Devices without a speaker, and those a speaker already
+     *   plays on through the other adapter
+     */
+    async playerGroups() {
+        const rows = Array.isArray(this.config.receivers) ? this.config.receivers : [];
+        const usedIds = [
+            ...new Set(
+                [
+                    ...this.running.map(r => r.cfg.urlState),
+                    ...rows.map(row => String(row?.urlState || '').trim()),
+                ].filter(Boolean),
+            ),
+        ];
+        /** @type {Map<string, string>} address of a satellite device (native.esphome / native.host) */
+        const hosts = new Map();
+        const hostOf = async (/** @type {string} */ id) => {
+            const device = satelliteDeviceOf(id);
+            if (!device) {
+                return '';
+            }
+            if (!hosts.has(device)) {
+                let host = '';
+                try {
+                    const native = (await this.getForeignObjectAsync(device))?.native || {};
+                    host = String(native.esphome || native.host || '').trim();
+                } catch {
+                    host = '';
+                }
+                hosts.set(device, host);
+            }
+            return hosts.get(device) || '';
+        };
+        const ids = [];
+        for (const pattern of [
+            'assistant.*.satellites.*.controls.*.url',
+            'satellite-display.*.satellites.*.media.url',
+        ]) {
+            try {
+                ids.push(...Object.keys((await this.getForeignObjectsAsync(pattern, 'state')) || {}));
+            } catch (e) {
+                this.log.debug(`Search for players (${pattern}) failed: ${e.message}`);
+            }
+        }
+        const players = [];
+        for (const id of new Set(ids)) {
+            players.push({ id, host: await hostOf(id) });
+        }
+        const used = [];
+        for (const id of usedIds) {
+            used.push({ id, host: await hostOf(id) });
+        }
+        return groupPlayers(players, used);
     }
 
     /**
@@ -536,8 +680,14 @@ class AirplayReceiver extends utils.Adapter {
             return;
         }
         try {
-            if (optional && !(await this.getForeignObjectAsync(id))) {
+            if (!(await this.targetExists(id))) {
+                if (!optional) {
+                    this.warnMissing(id);
+                }
                 return;
+            }
+            if (this.missingIds.delete(id)) {
+                this.log.info(`${id} exists again`);
             }
             await this.setForeignStateAsync(id, { val, ack: false });
         } catch (e) {
@@ -549,8 +699,8 @@ class AirplayReceiver extends utils.Adapter {
      * @param {ioBroker.Message} obj - Message
      */
     async onMessage(obj) {
-        if (!obj?.command) {
-            return;
+        if (!obj?.command || obj.command.startsWith('dm:')) {
+            return; // dm:* is answered by lib/device-management.js
         }
         const answer = result => obj.callback && this.sendTo(obj.from, obj.command, result, obj.callback);
         try {

@@ -96,6 +96,29 @@ remove the settings and restart the adapter to delete them.
 | Stop the player after a pause of            | 60 s          | Silence keeps the stream open until then; a longer pause stops the player       |
 | Path of ffmpeg                              | empty         | Empty = the bundled ffmpeg                                                      |
 
+### Devices
+
+The tab **Devices** shows a card per running speaker (Device Manager of the admin; the instance must run):
+
+- whether it is announced and whether it plays or is idle,
+- the connected sender (e.g. the name of the iPhone) with its audio format, and the player it plays on in short
+  (`assistant · Gast`, `satellite-display · panel-mobil`, `dune-hd-remote.1`; the full state is in the details),
+- a warning when a state of the player no longer exists in ioBroker (e.g. its satellite was deleted in
+  ioBroker.assistant),
+- a slider for the volume of the player (0–100 % of its own range) when the speaker has a volume state,
+- the action _End the AirPlay session_: the sender is disconnected and the player stopped,
+- the details: AirPlay name, RTSP port, audio from the sender, stream to the player, stream URL and the states of the
+  player.
+
+The instance action _Find players_ lists the players of ioBroker.assistant and ioBroker.satellite-display that are not
+in the speaker table yet. A satellite that both adapters know (the same address in `native.esphome` of ioBroker.assistant
+and `native.host` of ioBroker.satellite-display) is one device: its two play URL states are shown on one line, and it
+is listed apart, needing no row, when a speaker already plays on it through the other adapter. Speakers are still
+added, removed and changed in the tab Speakers.
+
+When a state of a player is missing, the log warns once per state, and nothing is written there until it exists
+again (instead of a warning "has no existing object" for every play, stop and volume change).
+
 ## What happens
 
 1. The adapter announces `_raop._tcp` for every speaker. The name on the iPhone is the AirPlay name.
@@ -178,10 +201,16 @@ not affiliated with Apple.
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.1.6 (2026-11-25)
 
 - (sadam6752-tech) Answers the message `help` (`common.supportedMessages.help`): AI agents such as ioBroker.pi-agent
   learn what the adapter does and which states tell what plays
+- (sadam6752-tech) New tab Devices (Device Manager): a card per speaker with playing or idle, the sender and its audio
+  format, the player it plays on, its volume and "End the AirPlay session"; the instance action "Find players" lists
+  the players of ioBroker.assistant and ioBroker.satellite-display that are not in the table yet, one device (same
+  address in both adapters) on one line
+- (sadam6752-tech) A state of a player that no longer exists (e.g. a deleted satellite) is warned once in the log and
+  marked on its card, instead of a warning for every write
 
 ### 0.1.5 (2026-11-18)
 
@@ -208,10 +237,6 @@ not affiliated with Apple.
   volume (0 … 100 %), title (48 bytes) and a FLAC 48 kHz mono stream by itself
 - (sadam6752-tech) The stream is sent without chunked encoding, like an internet radio: an ESPHome player (ESP-IDF
   HTTP client) hung when it stopped the endless chunked stream; starting and switching are faster now
-
-### 0.1.1 (2026-11-06)
-
-- (sadam6752-tech) Fixed ports are declared in the used resources registry of js-controller 8
 
 Older changes: [CHANGELOG_OLD.md](CHANGELOG_OLD.md)
 

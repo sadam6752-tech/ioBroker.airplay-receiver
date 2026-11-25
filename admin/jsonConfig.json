@@ -158,6 +158,34 @@
                 }
             }
         },
+        "_devicesTab": {
+            "type": "panel",
+            "label": "Devices",
+            "items": {
+                "_devicesIntro": {
+                    "type": "staticText",
+                    "text": "The AirPlay speakers of this instance: whether they play, the connected sender and its audio format, the player they play on with its volume, and ending an AirPlay session. A speaker whose player no longer exists in ioBroker is marked. \"Find players\" lists the players of ioBroker.assistant and ioBroker.satellite-display that are not in the speaker table yet. Add, remove or change speakers in the tab Speakers. The instance must run.",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_deviceManager": {
+                    "type": "deviceManager",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "style": {
+                        "width": "100%",
+                        "height": "100%",
+                        "overflow": "hidden"
+                    }
+                }
+            }
+        },
         "_settingsTab": {
             "type": "panel",
             "label": "Settings",

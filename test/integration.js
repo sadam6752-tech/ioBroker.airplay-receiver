@@ -112,6 +112,31 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.deepEqual(answer.commands, [{ command: 'help', write: false }]);
             });
 
+            it('answers the Device Manager (dm:instanceInfo, dm:deviceDetails) and still answers "help"', async function () {
+                this.timeout(20_000);
+                const ask = (command, message) =>
+                    new Promise((resolve, reject) => {
+                        const timer = setTimeout(() => reject(new Error(`no answer to ${command}`)), 10_000);
+                        harness.sendTo('airplay-receiver.0', command, message, resp => {
+                            clearTimeout(timer);
+                            resolve(resp);
+                        });
+                    });
+                const info = await ask('dm:instanceInfo', {});
+                assert.ok(info.apiVersion);
+                assert.deepEqual(
+                    info.actions.map(a => a.id),
+                    ['findPlayers'],
+                );
+                const details = await ask('dm:deviceDetails', 'receivers.kino');
+                assert.equal(details.id, 'receivers.kino');
+                assert.equal(details.schema.items._name.data, 'Kino');
+                assert.equal(details.schema.items._target.data, `${DUNE}.media.playUrl`);
+                assert.equal(details.schema.items._port.data, DUNE_RTSP);
+                // dm:* is left to dm-utils: the own message handler does not answer "Unknown command" for it
+                assert.equal(typeof (await ask('help', {})).help, 'string');
+            });
+
             it('plays a stream on the satellite, with volume and title, and stops it', async function () {
                 this.timeout(60_000);
                 const sender = new RaopSender({ port: RTSP_PORT, drop: seq => seq % 50 === 7 });
@@ -123,14 +148,27 @@ tests.integration(path.join(__dirname, '..'), {
                     // before the sender names the track, the display shows where the music comes from
                     await waitFor(`${SAT}.controls.media_title`, v => v === 'AirPlay – Test iPhone');
                     await sender.volume(-15);
-                    await sender.metadata(buildDmap([['mlit', buildDmap([['minm', 'Song'], ['asar', 'Band']])]]));
+                    await sender.metadata(
+                        buildDmap([
+                            [
+                                'mlit',
+                                buildDmap([
+                                    ['minm', 'Song'],
+                                    ['asar', 'Band'],
+                                ]),
+                            ],
+                        ]),
+                    );
                     for (let i = 0; i < 100; i += 5) {
                         for (let k = i; k < i + 5; k++) {
                             sender.send(k, sineFrame(k));
                         }
                         await new Promise(r => setTimeout(r, 40));
                     }
-                    const url = await waitFor(`${SAT}.controls.player.url`, v => typeof v === 'string' && v.startsWith('http'));
+                    const url = await waitFor(
+                        `${SAT}.controls.player.url`,
+                        v => typeof v === 'string' && v.startsWith('http'),
+                    );
                     assert.equal(url, `http://127.0.0.1:${HTTP_PORT}/gast.flac`);
                     assert.equal(await waitFor(`${SAT}.controls.player.volume`, v => v === 0.5), 0.5);
                     assert.equal(await waitFor(`${SAT}.controls.media_title`, v => v === 'Band – Song'), 'Band – Song');
@@ -142,7 +180,12 @@ tests.integration(path.join(__dirname, '..'), {
                     assert.equal(res.headers.get('content-type'), 'audio/flac');
                     const reader = res.body?.getReader();
                     const first = await reader?.read();
-                    assert.equal(Buffer.from(first?.value || []).subarray(0, 4).toString(), 'fLaC');
+                    assert.equal(
+                        Buffer.from(first?.value || [])
+                            .subarray(0, 4)
+                            .toString(),
+                        'fLaC',
+                    );
                     // the firmware may have replaced the text while it opened the stream: it is written again
                     await harness.states.setStateAsync(`${SAT}.controls.media_title`, { val: 'SWR3', ack: true });
                     await waitFor(`${SAT}.controls.media_title`, v => v === 'Band – Song', 5000);
@@ -170,7 +213,10 @@ tests.integration(path.join(__dirname, '..'), {
                         }
                         await new Promise(r => setTimeout(r, 40));
                     }
-                    const url = await waitFor(`${DUNE}.media.playUrl`, v => typeof v === 'string' && v.startsWith('http'));
+                    const url = await waitFor(
+                        `${DUNE}.media.playUrl`,
+                        v => typeof v === 'string' && v.startsWith('http'),
+                    );
                     assert.equal(url, `http://127.0.0.1:${HTTP_PORT}/kino.mp3`);
                     // 0 … 100 % like the volume state of the Dune
                     assert.equal(await waitFor(`${DUNE}.control.volume`, v => v === 50), 50);
@@ -180,7 +226,9 @@ tests.integration(path.join(__dirname, '..'), {
                     const reader = res.body?.getReader();
                     const head = Buffer.from((await reader?.read())?.value || []);
                     // ID3 tag or an MPEG frame sync
-                    assert.ok(head.subarray(0, 3).toString() === 'ID3' || (head[0] === 0xff && (head[1] & 0xe0) === 0xe0));
+                    assert.ok(
+                        head.subarray(0, 3).toString() === 'ID3' || (head[0] === 0xff && (head[1] & 0xe0) === 0xe0),
+                    );
 
                     // the sender pauses: silence keeps the stream open, nothing is stopped before the pause time (3 s)
                     await new Promise(r => setTimeout(r, 1500));

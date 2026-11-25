@@ -26,5 +26,7 @@
     "Empty: the bundled ffmpeg": "Puste: dołączony ffmpeg",
     "ms": "ms",
     "s": "s",
-    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Usunięcie wiersza usuwa obiekty tego głośnika. Stany z ustawieniami History, InfluxDB, SQL lub innymi własnymi ustawieniami zachowują obiekty głośnika; log je wymienia."
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Usunięcie wiersza usuwa obiekty tego głośnika. Stany z ustawieniami History, InfluxDB, SQL lub innymi własnymi ustawieniami zachowują obiekty głośnika; log je wymienia.",
+    "Devices": "Urządzenia",
+    "The AirPlay speakers of this instance: whether they play, the connected sender and its audio format, the player they play on with its volume, and ending an AirPlay session. A speaker whose player no longer exists in ioBroker is marked. \"Find players\" lists the players of ioBroker.assistant and ioBroker.satellite-display that are not in the speaker table yet. Add, remove or change speakers in the tab Speakers. The instance must run.": "Głośniki AirPlay tej instancji: czy grają, połączony nadawca i jego format dźwięku, odtwarzacz, na którym grają, z jego głośnością, oraz kończenie sesji AirPlay. Głośnik, którego odtwarzacz nie istnieje już w ioBroker, jest oznaczony. „Znajdź odtwarzacze” pokazuje odtwarzacze ioBroker.assistant i ioBroker.satellite-display, których nie ma jeszcze w tabeli głośników. Głośniki dodaje się, usuwa i zmienia w zakładce Głośniki. Instancja musi działać."
 }

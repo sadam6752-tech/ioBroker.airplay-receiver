@@ -26,5 +26,7 @@
     "Empty: the bundled ffmpeg": "Порожньо: вбудований ffmpeg",
     "ms": "мс",
     "s": "с",
-    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Видалення рядка видаляє об'єкти цієї колонки. Якщо стани мають налаштування History, InfluxDB, SQL або інші власні налаштування, об'єкти колонки зберігаються; лог їх називає."
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "Видалення рядка видаляє об'єкти цієї колонки. Якщо стани мають налаштування History, InfluxDB, SQL або інші власні налаштування, об'єкти колонки зберігаються; лог їх називає.",
+    "Devices": "Пристрої",
+    "The AirPlay speakers of this instance: whether they play, the connected sender and its audio format, the player they play on with its volume, and ending an AirPlay session. A speaker whose player no longer exists in ioBroker is marked. \"Find players\" lists the players of ioBroker.assistant and ioBroker.satellite-display that are not in the speaker table yet. Add, remove or change speakers in the tab Speakers. The instance must run.": "Колонки AirPlay цієї інстанції: чи грають вони, підключений відправник і його формат звуку, плеєр, на якому вони грають, з його гучністю, і завершення сеансу AirPlay. Колонка, плеєра якої більше немає в ioBroker, позначається. «Знайти плеєри» показує плеєри ioBroker.assistant та ioBroker.satellite-display, яких ще немає в таблиці колонок. Колонки додаються, видаляються та змінюються на вкладці «Колонки». Інстанція має працювати."
 }

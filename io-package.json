@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "airplay-receiver",
-        "version": "0.1.5",
+        "version": "0.1.6",
         "news": {
+            "0.1.6": {
+                "en": "New tab Devices: a card per speaker with playing or idle, sender and audio format, the player with its volume, and ending an AirPlay session; Find players lists players not yet configured; a missing player state is warned once; answers help for AI agents",
+                "de": "Neuer Reiter Geräte: eine Karte pro Lautsprecher mit Wiedergabe oder bereit, Sender und Audioformat, dem Player mit seiner Lautstärke und dem Beenden einer AirPlay-Sitzung; Player suchen listet noch nicht eingerichtete Player; ein fehlender Player-State wird einmal gewarnt; beantwortet help für KI-Agenten",
+                "ru": "Новая вкладка «Устройства»: карточка на каждую колонку — играет или ожидает, отправитель и формат звука, плеер с громкостью и завершение сеанса AirPlay; «Найти плееры» показывает ещё не настроенные плееры; об отсутствующем состоянии плеера предупреждение один раз; отвечает на help для ИИ-агентов",
+                "pt": "Novo separador Dispositivos: um cartão por altifalante com a tocar ou em espera, emissor e formato de áudio, o leitor com o seu volume e terminar uma sessão AirPlay; Procurar leitores mostra leitores ainda não configurados; um estado de leitor em falta é avisado uma vez; responde a help para agentes de IA",
+                "nl": "Nieuw tabblad Apparaten: een kaart per luidspreker met spelen of inactief, zender en audioformaat, de speler met zijn volume en het beëindigen van een AirPlay-sessie; Spelers zoeken toont nog niet ingestelde spelers; een ontbrekende speler-state wordt één keer gemeld; beantwoordt help voor AI-agents",
+                "fr": "Nouvel onglet Appareils : une carte par enceinte avec lecture ou attente, émetteur et format audio, le lecteur avec son volume et la fin d'une session AirPlay ; Chercher des lecteurs liste les lecteurs pas encore configurés ; un état de lecteur manquant est signalé une seule fois ; répond à help pour les agents IA",
+                "it": "Nuova scheda Dispositivi: una scheda per altoparlante con riproduzione o attesa, mittente e formato audio, il lettore con il suo volume e la chiusura di una sessione AirPlay; Cerca lettori elenca i lettori non ancora configurati; uno stato del lettore mancante viene segnalato una volta; risponde a help per gli agenti IA",
+                "es": "Nueva pestaña Dispositivos: una tarjeta por altavoz con reproduciendo o en espera, emisor y formato de audio, el reproductor con su volumen y terminar una sesión AirPlay; Buscar reproductores muestra los reproductores aún no configurados; un estado de reproductor que falta se avisa una vez; responde a help para agentes de IA",
+                "pl": "Nowa zakładka Urządzenia: karta dla każdego głośnika z odtwarzaniem lub bezczynnością, nadawcą i formatem dźwięku, odtwarzaczem z głośnością i kończeniem sesji AirPlay; Znajdź odtwarzacze pokazuje jeszcze nieskonfigurowane odtwarzacze; o brakującym stanie odtwarzacza ostrzega jeden raz; odpowiada na help dla agentów AI",
+                "uk": "Нова вкладка «Пристрої»: картка для кожної колонки — грає чи очікує, відправник і формат звуку, плеєр з гучністю та завершення сеансу AirPlay; «Знайти плеєри» показує ще не налаштовані плеєри; про відсутній стан плеєра попередження один раз; відповідає на help для ШІ-агентів",
+                "zh-cn": "新增“设备”选项卡：每个扬声器一张卡片，显示播放或空闲、发送设备及音频格式、播放器及其音量，并可结束 AirPlay 会话；“查找播放器”列出尚未配置的播放器；缺失的播放器状态只警告一次；为 AI 代理响应 help"
+            },
             "0.1.5": {
                 "en": "A network outage writes one mDNS warning instead of one per packet; the repeats are counted, and one info line says when mDNS works again",
                 "de": "Ein Netzwerkausfall schreibt eine mDNS-Warnung statt einer pro Paket; die Wiederholungen werden gezählt, und eine Info-Zeile meldet, wann mDNS wieder funktioniert",
@@ -80,19 +93,6 @@
                 "pl": "Każdy odtwarzacz odtwarzający URL: satelity ioBroker.assistant, Dune HD i każdy stan z rolą media.url; strumienie MP3 działają; pauza utrzymuje strumień otwarty 60 s",
                 "uk": "Будь-який плеєр, що відтворює URL: сателіти ioBroker.assistant, Dune HD і будь-який стан з роллю media.url; MP3-потоки працюють; пауза тримає потік відкритим 60 с",
                 "zh-cn": "任何可播放 URL 的播放器：ioBroker.assistant 卫星、Dune HD 以及所有角色为 media.url 的状态；MP3 流可用；暂停时流保持打开 60 秒"
-            },
-            "0.0.3": {
-                "en": "The display shows \"AirPlay – <sender>\" right away instead of the radio station that played before, and the track title is written again once the satellite has opened the stream",
-                "de": "Das Display zeigt sofort \"AirPlay – <Sender>\" statt des zuvor gespielten Radiosenders, und der Titel wird erneut geschrieben, sobald der Satellit den Stream geöffnet hat",
-                "ru": "Дисплей сразу показывает «AirPlay – <отправитель>» вместо радиостанции, игравшей до этого, а название трека записывается повторно, когда сателлит открыл поток",
-                "pt": "O ecrã mostra logo \"AirPlay – <emissor>\" em vez da estação de rádio anterior, e o título da faixa é escrito de novo quando o satélite abre o fluxo",
-                "nl": "Het display toont meteen \"AirPlay – <zender>\" in plaats van de radiozender die eerder speelde, en de titel wordt opnieuw geschreven zodra de satelliet de stream heeft geopend",
-                "fr": "L'écran affiche aussitôt « AirPlay – <émetteur> » au lieu de la radio jouée avant, et le titre est réécrit dès que le satellite a ouvert le flux",
-                "it": "Il display mostra subito \"AirPlay – <mittente>\" invece della stazione radio riprodotta prima, e il titolo viene riscritto appena il satellite ha aperto il flusso",
-                "es": "La pantalla muestra enseguida \"AirPlay – <emisor>\" en lugar de la emisora que sonaba antes, y el título se escribe de nuevo cuando el satélite abre el flujo",
-                "pl": "Wyświetlacz od razu pokazuje „AirPlay – <nadawca>” zamiast wcześniej grającej stacji radiowej, a tytuł jest zapisywany ponownie, gdy satelita otworzy strumień",
-                "uk": "Дисплей одразу показує «AirPlay – <відправник>» замість радіостанції, що грала раніше, а назва треку записується повторно, коли сателіт відкрив потік",
-                "zh-cn": "显示屏立即显示“AirPlay – <发送端>”，不再停留在之前播放的电台，卫星打开流后会再次写入曲目标题"
             }
         },
         "titleLang": {
@@ -167,6 +167,7 @@
         ],
         "messagebox": true,
         "supportedMessages": {
+            "deviceManager": true,
             "help": true
         },
         "declareUsedResources": true

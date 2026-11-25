@@ -26,5 +26,7 @@
     "Empty: the bundled ffmpeg": "留空：使用自带的 ffmpeg",
     "ms": "毫秒",
     "s": "秒",
-    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "删除一行会删除该扬声器的对象。如果状态带有 History、InfluxDB、SQL 或其他自定义设置，则保留该扬声器的对象；日志会列出它们。"
+    "Removing a row deletes the objects of that speaker. States with History, InfluxDB, SQL or other custom settings keep the speaker's objects; the log names them.": "删除一行会删除该扬声器的对象。如果状态带有 History、InfluxDB、SQL 或其他自定义设置，则保留该扬声器的对象；日志会列出它们。",
+    "Devices": "设备",
+    "The AirPlay speakers of this instance: whether they play, the connected sender and its audio format, the player they play on with its volume, and ending an AirPlay session. A speaker whose player no longer exists in ioBroker is marked. \"Find players\" lists the players of ioBroker.assistant and ioBroker.satellite-display that are not in the speaker table yet. Add, remove or change speakers in the tab Speakers. The instance must run.": "此实例的 AirPlay 扬声器：是否正在播放、已连接的发送设备及其音频格式、播放所用的播放器及其音量，以及结束 AirPlay 会话。播放器已不在 ioBroker 中的扬声器会被标记。“查找播放器”列出尚未在扬声器表中的 ioBroker.assistant 和 ioBroker.satellite-display 播放器。请在“扬声器”选项卡中添加、删除或更改扬声器。实例必须在运行。"
 }
